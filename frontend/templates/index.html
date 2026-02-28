@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AEVE — Autonomous Educational Video Engine</title>
+    <link rel="stylesheet" href="/static/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-glow"></div>
+            <div class="header-content">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 40 40" fill="none">
+                            <circle cx="20" cy="20" r="18" stroke="url(#grad)" stroke-width="2"/>
+                            <path d="M14 26L20 14L26 26" stroke="url(#grad)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <circle cx="20" cy="20" r="3" fill="url(#grad)"/>
+                            <defs><linearGradient id="grad" x1="0" y1="0" x2="40" y2="40"><stop stop-color="#818cf8"/><stop offset="1" stop-color="#06b6d4"/></linearGradient></defs>
+                        </svg>
+                    </div>
+                    <div>
+                        <h1>AEVE</h1>
+                        <p class="tagline">Autonomous Educational Video Engine</p>
+                    </div>
+                </div>
+                <div class="header-badge">
+                    <span class="badge-dot"></span>
+                    <span id="statusBadge">Ready</span>
+                </div>
+            </div>
+        </header>
+
+        <!-- Main Content -->
+        <main class="main">
+            <!-- Input Section -->
+            <section class="input-section" id="inputSection">
+                <div class="input-card">
+                    <h2 class="section-title">
+                        <span class="title-icon">🧮</span>
+                        What do you want to learn?
+                    </h2>
+
+                    <form id="pipelineForm" enctype="multipart/form-data">
+                        <div class="input-group">
+                            <label for="queryInput" class="label">Topic or Question</label>
+                            <textarea id="queryInput" name="query" 
+                                placeholder="e.g. Prove the Pythagorean theorem using similar triangles..."
+                                rows="3"></textarea>
+                        </div>
+
+                        <div class="input-row">
+                            <div class="input-group file-upload-group">
+                                <label class="label">Or Upload an Image</label>
+                                <div class="file-upload" id="fileUpload">
+                                    <input type="file" id="imageInput" name="image" accept="image/*" hidden>
+                                    <div class="file-upload-content">
+                                        <svg class="upload-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+                                        <span id="fileName">Drop image or click to browse</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="input-group quality-group">
+                                <label class="label">Quality</label>
+                                <div class="quality-selector">
+                                    <button type="button" class="quality-btn active" data-quality="low">⚡ Fast</button>
+                                    <button type="button" class="quality-btn" data-quality="medium">⚖️ Medium</button>
+                                    <button type="button" class="quality-btn" data-quality="high">✨ High</button>
+                                </div>
+                            </div>
+                        </div>
+
+                        <button type="submit" class="submit-btn" id="submitBtn">
+                            <span class="btn-text">Generate Video</span>
+                            <span class="btn-icon">→</span>
+                        </button>
+                    </form>
+                </div>
+            </section>
+
+            <!-- Pipeline Progress Section -->
+            <section class="pipeline-section" id="pipelineSection" style="display:none;">
+                <div class="pipeline-header">
+                    <h2 class="section-title">
+                        <span class="title-icon">⚙️</span>
+                        Pipeline Progress
+                    </h2>
+                    <div class="elapsed-time" id="elapsedTime">0:00</div>
+                </div>
+
+                <!-- Pipeline Steps -->
+                <div class="pipeline-steps">
+                    <div class="step" id="step-phase1" data-step="phase1">
+                        <div class="step-connector"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot">
+                                <span class="step-number">I</span>
+                            </div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Knowledge Distillation</h3>
+                                <span class="step-badge" id="badge-phase1">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase1">M1 (Problem Solver) + M2 (Verifier)</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot groq"></span>M1 Groq/Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>M2 DeepSeek-R1</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase1"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-phase2" data-step="phase2">
+                        <div class="step-connector"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot">
+                                <span class="step-number">II</span>
+                            </div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Consensus Committee</h3>
+                                <span class="step-badge" id="badge-phase2">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase2">M3 (Storyboard) → M4 (Visual) → M5 (Critic) → M6 (Finalizer)</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot groq"></span>M3 Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>M4 DeepSeek</span>
+                                <span class="model-tag"><span class="model-dot groq"></span>M5 Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>M6 Qwen-72B</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase2"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-phase3" data-step="phase3">
+                        <div class="step-connector"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot">
+                                <span class="step-number">III</span>
+                            </div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Distribution — Audio + Code</h3>
+                                <span class="step-badge" id="badge-phase3">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase3">M7 (Narration) + M8 (TTS) | M9 (Manim Code) + M10 (Review)</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot groq"></span>M7 Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot tts"></span>M8 Edge-TTS</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>M9 DeepSeek-R1</span>
+                                <span class="model-tag"><span class="model-dot groq"></span>M10 Llama-70B</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase3"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-assembly" data-step="assembly">
+                        <div class="step-connector last"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot">
+                                <span class="step-number">IV</span>
+                            </div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Render & Assembly</h3>
+                                <span class="step-badge" id="badge-assembly">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-assembly">Manim render + FFmpeg merge → Final video</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot manim"></span>Manim CE</span>
+                                <span class="model-tag"><span class="model-dot ffmpeg"></span>FFmpeg</span>
+                            </div>
+                            <div class="step-preview" id="preview-assembly"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Live Log -->
+                <div class="log-section">
+                    <div class="log-header" id="logToggle">
+                        <h3>📋 Live Console</h3>
+                        <button class="log-toggle-btn" id="logToggleBtn">▼</button>
+                    </div>
+                    <div class="log-container" id="logContainer">
+                        <div class="log-content" id="logContent"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Result Section -->
+            <section class="result-section" id="resultSection" style="display:none;">
+                <div class="result-card">
+                    <div class="result-icon">🎬</div>
+                    <h2>Video Ready!</h2>
+                    <video id="resultVideo" controls class="result-video"></video>
+                    <div class="result-actions">
+                        <button class="action-btn primary" onclick="location.reload()">
+                            <span>+ New Video</span>
+                        </button>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Error Section -->
+            <section class="error-section" id="errorSection" style="display:none;">
+                <div class="error-card">
+                    <div class="error-icon">⚠️</div>
+                    <h2>Pipeline Error</h2>
+                    <p id="errorMessage"></p>
+                    <button class="action-btn" onclick="location.reload()">Try Again</button>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="/static/app.js"></script>
+</body>
+</html>

@@ -1,0 +1,7 @@
+manim
+edge-tts
+openai
+google-genai
+mutagen
+Pillow
+colorama

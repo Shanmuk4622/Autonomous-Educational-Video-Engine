@@ -1,0 +1,133 @@
+[
+  {
+    "scene_id": "001",
+    "meta_data": {
+      "topic": "Introduction to the Pythagorean Theorem",
+      "complexity": "Basic"
+    },
+    "content": {
+      "voice_over": "The Pythagorean theorem is a fundamental concept in geometry that relates the lengths of the sides of a right-angled triangle. It states that the square of the length of the hypotenuse is equal to the sum of the squares of the lengths of the other two sides. This can be expressed as $c^2 = a^2 + b^2$.",
+      "manim_logic": "Create a Title text 'Introduction to the Pythagorean Theorem' at the top. Draw a right-angled triangle with sides labeled as a, b, and c using Line and Dot. Write the equation $c^2 = a^2 + b^2$ using Text below the triangle. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$c^2 = a^2 + b^2$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 30,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "002",
+    "meta_data": {
+      "topic": "Constructing Squares on Each Side",
+      "complexity": "Intermediate"
+    },
+    "content": {
+      "voice_over": "To prove the Pythagorean theorem, we start by constructing a square on each side of the right-angled triangle. The area of a square with side length $s$ is given by $s^2$.",
+      "manim_logic": "FadeOut the previous scene. Create three squares using Square with side lengths a, b, and c. Label each square with its area using Text. Draw the right-angled triangle from the previous scene inside the squares. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$s^2$",
+        "$a^2$",
+        "$b^2$",
+        "$c^2$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 35,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "003",
+    "meta_data": {
+      "topic": "Understanding the Areas of the Squares",
+      "complexity": "Intermediate"
+    },
+    "content": {
+      "voice_over": "The area of the square on side $a$ is $a^2$, the area of the square on side $b$ is $b^2$, and the area of the square on the hypotenuse $c$ is $c^2$. We aim to show that $c^2 = a^2 + b^2$ through geometric reasoning.",
+      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Highlight the areas of the squares using SurroundingRectangle. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$a^2$",
+        "$b^2$",
+        "$c^2$",
+        "$c^2 = a^2 + b^2$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 40,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "004",
+    "meta_data": {
+      "topic": "Dividing the Triangle into Smaller Triangles",
+      "complexity": "Advanced"
+    },
+    "content": {
+      "voice_over": "If we draw the altitude from the right angle to the hypotenuse, it divides the triangle into two smaller right-angled triangles, each similar to the original triangle and to each other.",
+      "manim_logic": "FadeOut the previous scene. Draw the right-angled triangle from the first scene. Draw the altitude using Line and label the point where it meets the hypotenuse as D using Dot and Text. Create two smaller right-angled triangles using Line and Dot. FadeIn an explanatory Text below.",
+      "latex_elements": []
+    },
+    "sync_parameters": {
+      "duration": 30,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "005",
+    "meta_data": {
+      "topic": "Relating Altitude to Areas",
+      "complexity": "Advanced"
+    },
+    "content": {
+      "voice_over": "The area $A$ of a triangle with base $b$ and height $h$ is given by $A = \\frac{1}{2}bh$. For our triangle, $A = \\frac{1}{2}ab$. The areas of the smaller triangles can be related to the sides of the triangle.",
+      "manim_logic": "FadeOut the previous scene. Create the formula for the area of a triangle using Text. Highlight the areas of the smaller triangles using SurroundingRectangle. Draw the right-angled triangle from the first scene with the altitude. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$A = \\frac{1}{2}bh$",
+        "$A = \\frac{1}{2}ab$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 35,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "006",
+    "meta_data": {
+      "topic": "Demonstrating Equality of Areas",
+      "complexity": "Advanced"
+    },
+    "content": {
+      "voice_over": "By considering the areas of the squares and the relationship between the areas of the triangle and the squares, we can demonstrate the equality $c^2 = a^2 + b^2$. This involves showing that the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides.",
+      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Rearrange the areas of the squares using Transform. Highlight the equality using SurroundingRectangle. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$c^2 = a^2 + b^2$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 40,
+      "transition": "FadeOut"
+    }
+  },
+  {
+    "scene_id": "007",
+    "meta_data": {
+      "topic": "Visualizing the Proof",
+      "complexity": "Advanced"
+    },
+    "content": {
+      "voice_over": "To visualize the proof, consider the geometric construction where the squares on each side of the triangle are rearranged to fit into the square on the hypotenuse. This visual representation helps to illustrate how the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides.",
+      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Rearrange the squares to fit into the square on the hypotenuse using Transform. Highlight the equality using SurroundingRectangle. FadeIn an explanatory Text below.",
+      "latex_elements": [
+        "$c^2 = a^2 + b^2$"
+      ]
+    },
+    "sync_parameters": {
+      "duration": 45,
+      "transition": "FadeOut"
+    }
+  }
+]
