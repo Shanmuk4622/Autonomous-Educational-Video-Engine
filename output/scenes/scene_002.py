@@ -2,32 +2,24 @@ from manim import *
 
 class Scene002(Scene):
     def construct(self):
-        square_a = Square(side_length=2, color=BLUE)
-        label_a = Text("$a^2$", font_size=24)
-        label_a.next_to(square_a, DOWN)
-
-        square_b = Square(side_length=3, color=RED)
-        label_b = Text("$b^2$", font_size=24)
-        label_b.next_to(square_b, DOWN)
-
-        square_c = Square(side_length=3.6, color=GREEN)
-        label_c = Text("$c^2$", font_size=24)
-        label_c.next_to(square_c, DOWN)
-
-        self.play(Create(square_a), Create(label_a))
+        title = Text("Factoring the Numerator", font_size=40, color=YELLOW)
+        self.play(Write(title))
         self.wait(0.5)
-        self.play(Create(square_b), Create(label_b))
-        self.wait(0.5)
-        self.play(Create(square_c), Create(label_c))
+        self.play(title.animate.to_edge(UP).scale(0.7))
+
+        eq = Text("$x^2 - 4 = (x + 2)(x - 2)$", font_size=48)
+        self.play(Write(eq))
+        self.wait(1)
+
+        eq_transformed = Text("$x^2 - 4 = (x + 2)(x - 2)$", font_size=48)
+        self.play(Transform(eq, eq_transformed))
         self.wait(0.5)
 
-        triangle = Polygon(ORIGIN, RIGHT*2, UP*2, color=YELLOW)
-        self.play(Create(triangle))
-        self.wait(0.5)
+        new_eq = Text("$\\frac{(x + 2)(x - 2)}{x - 2}$", font_size=48)
+        self.play(FadeIn(new_eq))
+        self.play(new_eq.animate.next_to(eq, DOWN*2))
+        self.wait(1)
 
-        explanation = Text("Area of square: $s^2$", font_size=24)
-        explanation.to_edge(DOWN)
-        self.play(Write(explanation))
-        self.wait(0.5)
-
+        self.wait(22.4)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
+        self.wait(27.9)

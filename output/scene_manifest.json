@@ -2,14 +2,15 @@
   {
     "scene_id": "001",
     "meta_data": {
-      "topic": "Introduction to the Pythagorean Theorem",
+      "topic": "Introduction to Limits",
       "complexity": "Basic"
     },
     "content": {
-      "voice_over": "The Pythagorean theorem is a fundamental concept in geometry that relates the lengths of the sides of a right-angled triangle. It states that the square of the length of the hypotenuse is equal to the sum of the squares of the lengths of the other two sides. This can be expressed as $c^2 = a^2 + b^2$.",
-      "manim_logic": "Create a Title text 'Introduction to the Pythagorean Theorem' at the top. Draw a right-angled triangle with sides labeled as a, b, and c using Line and Dot. Write the equation $c^2 = a^2 + b^2$ using Text below the triangle. FadeIn an explanatory Text below.",
+      "voice_over": "To understand the given problem, we first need to recall what a limit is. The limit of a function $f(x)$ as $x$ approaches $a$ is denoted by $\\lim_{x \\to a} f(x)$ and represents the value that $f(x)$ approaches as $x$ gets arbitrarily close to $a$. Let's consider the specific limit we're dealing with: $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$.",
+      "manim_logic": "Create a Title text 'Introduction to Limits' at the top. Write the equation $\\lim_{x \\to a} f(x)$ using Text. Create an Axes with x_range=[-5, 5] and y_range=[-5, 5]. Plot the function $f(x) = (x^2 - 4)/(x - 2)$ on the Axes. FadeIn an explanatory Text below the equation.",
       "latex_elements": [
-        "$c^2 = a^2 + b^2$"
+        "$\\lim_{x \\to a} f(x)$",
+        "$\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}$"
       ]
     },
     "sync_parameters": {
@@ -20,113 +21,73 @@
   {
     "scene_id": "002",
     "meta_data": {
-      "topic": "Constructing Squares on Each Side",
-      "complexity": "Intermediate"
+      "topic": "Factoring the Numerator",
+      "complexity": "Basic"
     },
     "content": {
-      "voice_over": "To prove the Pythagorean theorem, we start by constructing a square on each side of the right-angled triangle. The area of a square with side length $s$ is given by $s^2$.",
-      "manim_logic": "FadeOut the previous scene. Create three squares using Square with side lengths a, b, and c. Label each square with its area using Text. Draw the right-angled triangle from the previous scene inside the squares. FadeIn an explanatory Text below.",
+      "voice_over": "The first step in simplifying the given expression is to factor the numerator. We notice that $x^2 - 4$ can be factored as a difference of squares: $x^2 - 4 = (x + 2)(x - 2)$. So, our expression becomes $\\frac{(x + 2)(x - 2)}{x - 2}$. Let's see how this simplifies the original limit.",
+      "manim_logic": "Create a Text 'Factoring the Numerator' at the top. Write the equation $x^2 - 4 = (x + 2)(x - 2)$ using Text. Transform the left side of the equation into the right side. Create a new Text with the expression $\\frac{(x + 2)(x - 2)}{x - 2}$. FadeIn this new Text below the equation.",
       "latex_elements": [
-        "$s^2$",
-        "$a^2$",
-        "$b^2$",
-        "$c^2$"
+        "$x^2 - 4 = (x + 2)(x - 2)$",
+        "$\\frac{(x + 2)(x - 2)}{x - 2}$"
       ]
     },
     "sync_parameters": {
-      "duration": 35,
+      "duration": 25,
       "transition": "FadeOut"
     }
   },
   {
     "scene_id": "003",
     "meta_data": {
-      "topic": "Understanding the Areas of the Squares",
-      "complexity": "Intermediate"
+      "topic": "Canceling Common Factors",
+      "complexity": "Basic"
     },
     "content": {
-      "voice_over": "The area of the square on side $a$ is $a^2$, the area of the square on side $b$ is $b^2$, and the area of the square on the hypotenuse $c$ is $c^2$. We aim to show that $c^2 = a^2 + b^2$ through geometric reasoning.",
-      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Highlight the areas of the squares using SurroundingRectangle. FadeIn an explanatory Text below.",
+      "voice_over": "Now that we have $\\frac{(x + 2)(x - 2)}{x - 2}$, we can simplify this fraction by canceling the common factor $(x - 2)$ from the numerator and the denominator. This leaves us with $x + 2$, which is much simpler to work with when evaluating the limit.",
+      "manim_logic": "Create a Text 'Canceling Common Factors' at the top. Write the equation $\\frac{(x + 2)(x - 2)}{x - 2}$ using Text. Strike through the $(x - 2)$ terms. Create a new Text with the expression $x + 2$. FadeIn this new Text below the equation.",
       "latex_elements": [
-        "$a^2$",
-        "$b^2$",
-        "$c^2$",
-        "$c^2 = a^2 + b^2$"
+        "$\\frac{(x + 2)(x - 2)}{x - 2} = x + 2$"
       ]
     },
     "sync_parameters": {
-      "duration": 40,
+      "duration": 20,
       "transition": "FadeOut"
     }
   },
   {
     "scene_id": "004",
     "meta_data": {
-      "topic": "Dividing the Triangle into Smaller Triangles",
-      "complexity": "Advanced"
+      "topic": "Evaluating the Limit",
+      "complexity": "Basic"
     },
     "content": {
-      "voice_over": "If we draw the altitude from the right angle to the hypotenuse, it divides the triangle into two smaller right-angled triangles, each similar to the original triangle and to each other.",
-      "manim_logic": "FadeOut the previous scene. Draw the right-angled triangle from the first scene. Draw the altitude using Line and label the point where it meets the hypotenuse as D using Dot and Text. Create two smaller right-angled triangles using Line and Dot. FadeIn an explanatory Text below.",
-      "latex_elements": []
+      "voice_over": "With our simplified expression $x + 2$, we can now evaluate the limit as $x$ approaches $2$. Since the function $f(x) = x + 2$ is continuous at $x = 2$, we can find the limit by simply substituting $x = 2$ into the expression $x + 2$. This gives us $2 + 2 = 4$.",
+      "manim_logic": "Create a Text 'Evaluating the Limit' at the top. Write the equation $x + 2$ using Text. Create a new Text with $x = 2$. Transform $x$ in $x + 2$ into $2$. Create a new Text with the calculation $2 + 2 = 4$. FadeIn this new Text below the equation.",
+      "latex_elements": [
+        "$\\lim_{x \\to 2} (x + 2) = 2 + 2 = 4$"
+      ]
     },
     "sync_parameters": {
-      "duration": 30,
+      "duration": 25,
       "transition": "FadeOut"
     }
   },
   {
     "scene_id": "005",
     "meta_data": {
-      "topic": "Relating Altitude to Areas",
-      "complexity": "Advanced"
+      "topic": "Conclusion of the Limit Evaluation",
+      "complexity": "Basic"
     },
     "content": {
-      "voice_over": "The area $A$ of a triangle with base $b$ and height $h$ is given by $A = \\frac{1}{2}bh$. For our triangle, $A = \\frac{1}{2}ab$. The areas of the smaller triangles can be related to the sides of the triangle.",
-      "manim_logic": "FadeOut the previous scene. Create the formula for the area of a triangle using Text. Highlight the areas of the smaller triangles using SurroundingRectangle. Draw the right-angled triangle from the first scene with the altitude. FadeIn an explanatory Text below.",
+      "voice_over": "Therefore, we have shown that $\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} = \\lim_{x \\to 2} (x + 2) = 4$. This demonstrates that the original limit statement is true, with both sides of the equation approaching the value $4$ as $x$ approaches $2$.",
+      "manim_logic": "Create a Text 'Conclusion' at the top. Write the original limit statement using Text. Create a new Text with the final result $4$. Create an Arrow from the original limit statement to the final result. FadeIn a summary Text below the equation.",
       "latex_elements": [
-        "$A = \\frac{1}{2}bh$",
-        "$A = \\frac{1}{2}ab$"
+        "$\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2} = \\lim_{x \\to 2} (x + 2) = 4$"
       ]
     },
     "sync_parameters": {
-      "duration": 35,
-      "transition": "FadeOut"
-    }
-  },
-  {
-    "scene_id": "006",
-    "meta_data": {
-      "topic": "Demonstrating Equality of Areas",
-      "complexity": "Advanced"
-    },
-    "content": {
-      "voice_over": "By considering the areas of the squares and the relationship between the areas of the triangle and the squares, we can demonstrate the equality $c^2 = a^2 + b^2$. This involves showing that the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides.",
-      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Rearrange the areas of the squares using Transform. Highlight the equality using SurroundingRectangle. FadeIn an explanatory Text below.",
-      "latex_elements": [
-        "$c^2 = a^2 + b^2$"
-      ]
-    },
-    "sync_parameters": {
-      "duration": 40,
-      "transition": "FadeOut"
-    }
-  },
-  {
-    "scene_id": "007",
-    "meta_data": {
-      "topic": "Visualizing the Proof",
-      "complexity": "Advanced"
-    },
-    "content": {
-      "voice_over": "To visualize the proof, consider the geometric construction where the squares on each side of the triangle are rearranged to fit into the square on the hypotenuse. This visual representation helps to illustrate how the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides.",
-      "manim_logic": "FadeOut the previous scene. Create the equation $c^2 = a^2 + b^2$ using Text. Rearrange the squares to fit into the square on the hypotenuse using Transform. Highlight the equality using SurroundingRectangle. FadeIn an explanatory Text below.",
-      "latex_elements": [
-        "$c^2 = a^2 + b^2$"
-      ]
-    },
-    "sync_parameters": {
-      "duration": 45,
+      "duration": 30,
       "transition": "FadeOut"
     }
   }

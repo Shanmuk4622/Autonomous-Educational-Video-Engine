@@ -6492,3 +6492,399 @@ class Scene007(Scene):
 2026-03-01 01:24:30,416 │ INFO    │   FINAL VIDEO READY: D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\final\final_video.mp4
 2026-03-01 01:24:30,416 │ INFO    │   Total scenes: 7/7
 2026-03-01 01:24:30,416 │ INFO    │ ============================================================
+2026-03-01 01:41:42,063 │ INFO    │ ============================================================
+2026-03-01 01:41:42,063 │ INFO    │ PHASE I: KNOWLEDGE DISTILLATION
+2026-03-01 01:41:42,064 │ INFO    │ ============================================================
+2026-03-01 01:41:42,064 │ INFO    │ Step 1/2: M1 (Problem Solver) — Solving the input query...
+2026-03-01 01:41:42,064 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M1] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:42,064 │ DEBUG   │   System prompt length: 708 chars
+2026-03-01 01:41:42,064 │ DEBUG   │   User prompt length:   852 chars
+2026-03-01 01:41:44,711 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M1] → ✓ Response received (2375 chars, 2.6s)
+2026-03-01 01:41:44,712 │ INFO    │   ✓ Output validation passed for M1 (format: latex_rich)
+2026-03-01 01:41:44,712 │ DEBUG   │   Response preview: ## Definitions
+To approach this problem, we first need to understand the given statement and what it's asking us to prove. The statement involves a limit, specifically:
+\[ \lim_{x \to a} f(x) = L \]
+T...
+2026-03-01 01:41:44,712 │ INFO    │   M1 produced a solution (2375 chars)
+2026-03-01 01:41:44,713 │ INFO    │ Step 2/2: M2 (Solution Verifier) — Verifying and enriching...
+2026-03-01 01:41:44,714 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M2] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:44,714 │ DEBUG   │   System prompt length: 702 chars
+2026-03-01 01:41:44,714 │ DEBUG   │   User prompt length:   3270 chars
+2026-03-01 01:41:44,844 │ ERROR   │ [GROQ] [llama-3.3-70b-versatile] [M2] → ✗ FAILED (attempt 1, rate_limit, 0.1s): Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjjmfs2qehavq3z2wn2qsrr9` service tier `on_demand` on tokens per day (TPD): Limit
+2026-03-01 01:41:44,846 │ INFO    │   🔄 Rotated to Groq key 2/4 (***npU8Y7)
+2026-03-01 01:41:44,846 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M2] → Sending request (attempt 2/3, primary)...
+2026-03-01 01:41:44,847 │ DEBUG   │   System prompt length: 702 chars
+2026-03-01 01:41:44,847 │ DEBUG   │   User prompt length:   3270 chars
+2026-03-01 01:41:46,491 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M2] → ✓ Response received (2764 chars, 1.6s)
+2026-03-01 01:41:46,491 │ INFO    │   ✓ Output validation passed for M2 (format: latex_rich)
+2026-03-01 01:41:46,491 │ DEBUG   │   Response preview: VERIFIED ✓
+## Definitions
+To approach this problem, we first need to understand the given statement and what it's asking us to prove. The statement involves a limit, specifically:
+\[ \lim_{x \to a} f(...
+2026-03-01 01:41:46,491 │ INFO    │   M2 verified solution (2764 chars)
+2026-03-01 01:41:46,491 │ INFO    │ PHASE I COMPLETE: Script 1 (Deep Solution) ready.
+2026-03-01 01:41:46,491 │ INFO    │ 
+2026-03-01 01:41:46,495 │ INFO    │ ============================================================
+2026-03-01 01:41:46,495 │ INFO    │ PHASE II: CONSENSUS COMMITTEE
+2026-03-01 01:41:46,497 │ INFO    │ ============================================================
+2026-03-01 01:41:46,497 │ INFO    │ Step 1/4: M3 (Storyboarder) — Splitting into visual scenes...
+2026-03-01 01:41:46,497 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M3] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:46,497 │ DEBUG   │   System prompt length: 656 chars
+2026-03-01 01:41:46,497 │ DEBUG   │   User prompt length:   4036 chars
+2026-03-01 01:41:46,633 │ ERROR   │ [GROQ] [llama-3.3-70b-versatile] [M3] → ✗ FAILED (attempt 1, rate_limit, 0.1s): Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjjrj966f6wtztvy2s05bmxq` service tier `on_demand` on tokens per day (TPD): Limit
+2026-03-01 01:41:46,633 │ INFO    │   🔄 Rotated to Groq key 3/4 (***ZEESsL)
+2026-03-01 01:41:46,633 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M3] → Sending request (attempt 2/3, primary)...
+2026-03-01 01:41:46,633 │ DEBUG   │   System prompt length: 656 chars
+2026-03-01 01:41:46,633 │ DEBUG   │   User prompt length:   4036 chars
+2026-03-01 01:41:49,049 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M3] → ✓ Response received (3416 chars, 2.4s)
+2026-03-01 01:41:49,049 │ INFO    │   ✓ Output validation passed for M3 (format: json_array)
+2026-03-01 01:41:49,050 │ DEBUG   │   Response preview: [
+  {
+    "scene_number": 1,
+    "title": "Introduction to Limits",
+    "key_concept": "Definition of a limit",
+    "narration": "To understand the given problem, we first need to recall what a limit ...
+2026-03-01 01:41:49,050 │ INFO    │   M3 created 5 scenes
+2026-03-01 01:41:49,050 │ INFO    │ Step 2/4: M4 (Visual Detailer) — Adding Manim animation details...
+2026-03-01 01:41:49,050 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M4] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:49,050 │ DEBUG   │   System prompt length: 694 chars
+2026-03-01 01:41:49,050 │ DEBUG   │   User prompt length:   4790 chars
+2026-03-01 01:41:49,191 │ ERROR   │ [GROQ] [llama-3.3-70b-versatile] [M4] → ✗ FAILED (attempt 1, rate_limit, 0.1s): Error code: 429 - {'error': {'message': 'Rate limit reached for model `llama-3.3-70b-versatile` in organization `org_01kjjs9km5fbvv68zbq0tymf6e` service tier `on_demand` on tokens per day (TPD): Limit
+2026-03-01 01:41:49,191 │ INFO    │   🔄 Rotated to Groq key 4/4 (***BgR4s7)
+2026-03-01 01:41:49,191 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M4] → Sending request (attempt 2/3, primary)...
+2026-03-01 01:41:49,191 │ DEBUG   │   System prompt length: 694 chars
+2026-03-01 01:41:49,191 │ DEBUG   │   User prompt length:   4790 chars
+2026-03-01 01:41:51,811 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M4] → ✓ Response received (4899 chars, 2.6s)
+2026-03-01 01:41:51,811 │ INFO    │   ✓ Output validation passed for M4 (format: json_array)
+2026-03-01 01:41:51,811 │ DEBUG   │   Response preview: [
+  {
+    "scene_number": 1,
+    "title": "Introduction to Limits",
+    "key_concept": "Definition of a limit",
+    "narration": "To understand the given problem, we first need to recall what a limit ...
+2026-03-01 01:41:51,812 │ INFO    │   M4 enriched 5 scenes with Manim logic
+2026-03-01 01:41:51,812 │ INFO    │ Step 3/4: M5 (Technical Critic) — Reviewing feasibility...
+2026-03-01 01:41:51,812 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M5] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:51,812 │ DEBUG   │   System prompt length: 674 chars
+2026-03-01 01:41:51,812 │ DEBUG   │   User prompt length:   5795 chars
+2026-03-01 01:41:54,715 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M5] → ✓ Response received (5099 chars, 2.9s)
+2026-03-01 01:41:54,715 │ INFO    │   ✓ Output validation passed for M5 (format: json_array)
+2026-03-01 01:41:54,715 │ DEBUG   │   Response preview: [
+  {
+    "scene_number": 1,
+    "title": "Introduction to Limits",
+    "key_concept": "Definition of a limit",
+    "narration": "To understand the given problem, we first need to recall what a limit ...
+2026-03-01 01:41:54,716 │ INFO    │   M5 reviewed 5 scenes
+2026-03-01 01:41:54,716 │ INFO    │     Scene 1: PASS (0 issues)
+2026-03-01 01:41:54,716 │ INFO    │     Scene 2: PASS (0 issues)
+2026-03-01 01:41:54,716 │ INFO    │     Scene 3: PASS (0 issues)
+2026-03-01 01:41:54,716 │ INFO    │     Scene 4: PASS (0 issues)
+2026-03-01 01:41:54,717 │ INFO    │     Scene 5: PASS (0 issues)
+2026-03-01 01:41:54,717 │ INFO    │ Step 4/4: M6 (Finalizer) — Producing final Scene Manifest...
+2026-03-01 01:41:54,717 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M6] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:54,717 │ DEBUG   │   System prompt length: 670 chars
+2026-03-01 01:41:54,717 │ DEBUG   │   User prompt length:   6224 chars
+2026-03-01 01:41:57,029 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M6] → ✓ Response received (4634 chars, 2.3s)
+2026-03-01 01:41:57,030 │ INFO    │   ✓ Output validation passed for M6 (format: json_array)
+2026-03-01 01:41:57,030 │ DEBUG   │   Response preview: [
+  {
+    "scene_id": "001",
+    "meta_data": {
+      "topic": "Introduction to Limits",
+      "complexity": "Basic"
+    },
+    "content": {
+      "voice_over": "To understand the given problem, we fi...
+2026-03-01 01:41:57,030 │ INFO    │ PHASE II COMPLETE: Scene Manifest with 5 scenes ready.
+2026-03-01 01:41:57,030 │ INFO    │ 
+2026-03-01 01:41:57,037 │ INFO    │ ============================================================
+2026-03-01 01:41:57,038 │ INFO    │ PHASE III: DISTRIBUTION ALGORITHM
+2026-03-01 01:41:57,038 │ INFO    │ Processing 5 scenes...
+2026-03-01 01:41:57,038 │ INFO    │ ============================================================
+2026-03-01 01:41:57,039 │ INFO    │ Scene manifest saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scene_manifest.json
+2026-03-01 01:41:57,039 │ INFO    │ 
+2026-03-01 01:41:57,039 │ INFO    │ ─── Scene 001 (1/5) ───
+2026-03-01 01:41:57,040 │ INFO    │   [Scene 001] Starting Audio Stream...
+2026-03-01 01:41:57,041 │ INFO    │   [Scene 001] M7 (Narration Writer) — Polishing voiceover...
+2026-03-01 01:41:57,042 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:41:57,043 │ DEBUG   │   System prompt length: 692 chars
+2026-03-01 01:41:57,043 │ DEBUG   │   User prompt length:   1245 chars
+2026-03-01 01:41:57,779 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → ✓ Response received (443 chars, 0.7s)
+2026-03-01 01:41:57,779 │ INFO    │   ✓ Output validation passed for M7 (format: text)
+2026-03-01 01:41:57,780 │ DEBUG   │   Response preview: To understand the given problem, we first need to recall what a limit is, notice that the limit of a function f of x as x approaches a certain value, is the value that f of x approaches as x gets arbi...
+2026-03-01 01:41:57,780 │ INFO    │   [Scene 001] M7 polished narration (443 chars)
+2026-03-01 01:41:57,780 │ INFO    │   [Scene 001] M8 (TTS) — Generating audio...
+2026-03-01 01:42:01,479 │ INFO    │   [Scene 001] M8 audio generated: 29.2s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_001.mp3
+2026-03-01 01:42:01,479 │ INFO    │   [Scene 001] Audio complete: 29.2s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_001.mp3
+2026-03-01 01:42:01,479 │ INFO    │   [Scene 001] Starting Code Stream...
+2026-03-01 01:42:01,479 │ INFO    │   [Scene 001] M9 (Manim Coder) — Generating code...
+2026-03-01 01:42:01,480 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:01,480 │ DEBUG   │   System prompt length: 717 chars
+2026-03-01 01:42:01,480 │ DEBUG   │   User prompt length:   5594 chars
+2026-03-01 01:42:02,885 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → ✓ Response received (1107 chars, 1.4s)
+2026-03-01 01:42:02,886 │ INFO    │   ✓ Output validation passed for M9 (format: python_code)
+2026-03-01 01:42:02,887 │ DEBUG   │   Response preview: from manim import *
+
+class Scene001(Scene):
+    def construct(self):
+        title = Text("Introduction to Limits", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+ ...
+2026-03-01 01:42:02,888 │ INFO    │   [Scene 001] M9 generated code (1093 chars)
+2026-03-01 01:42:02,888 │ INFO    │   [Scene 001] M10 (Code Reviewer) — Reviewing for errors...
+2026-03-01 01:42:02,890 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:02,891 │ DEBUG   │   System prompt length: 636 chars
+2026-03-01 01:42:02,891 │ DEBUG   │   User prompt length:   2081 chars
+2026-03-01 01:42:03,714 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → ✓ Response received (1121 chars, 0.8s)
+2026-03-01 01:42:03,715 │ INFO    │   ✓ Output validation passed for M10 (format: python_code)
+2026-03-01 01:42:03,715 │ DEBUG   │   Response preview: from manim import *
+
+class Scene001(Scene):
+    def construct(self):
+        title = Text("Introduction to Limits", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+ ...
+2026-03-01 01:42:03,715 │ INFO    │   [Scene 001] M10 reviewed code (1107 chars)
+2026-03-01 01:42:03,716 │ INFO    │   [Scene 001] Code saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scenes\scene_001.py
+2026-03-01 01:42:03,717 │ INFO    │   [Scene 001] Synchronizing audio-visual timing...
+2026-03-01 01:42:03,748 │ INFO    │   Adjusted final self.wait() to 29.2s
+2026-03-01 01:42:03,749 │ INFO    │   [Scene 001] ✓ Scene complete!
+2026-03-01 01:42:03,750 │ INFO    │ 
+2026-03-01 01:42:03,750 │ INFO    │ ─── Scene 002 (2/5) ───
+2026-03-01 01:42:03,750 │ INFO    │   [Scene 002] Starting Audio Stream...
+2026-03-01 01:42:03,750 │ INFO    │   [Scene 002] M7 (Narration Writer) — Polishing voiceover...
+2026-03-01 01:42:03,751 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:03,751 │ DEBUG   │   System prompt length: 692 chars
+2026-03-01 01:42:03,751 │ DEBUG   │   User prompt length:   1187 chars
+2026-03-01 01:42:04,232 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → ✓ Response received (410 chars, 0.5s)
+2026-03-01 01:42:04,232 │ INFO    │   ✓ Output validation passed for M7 (format: text)
+2026-03-01 01:42:04,232 │ DEBUG   │   Response preview: To simplify the given expression, we first need to factor the numerator, notice that x squared minus four can be factored as a difference of squares, which gives us x plus two, times x minus two. So, ...
+2026-03-01 01:42:04,232 │ INFO    │   [Scene 002] M7 polished narration (410 chars)
+2026-03-01 01:42:04,233 │ INFO    │   [Scene 002] M8 (TTS) — Generating audio...
+2026-03-01 01:42:07,329 │ INFO    │   [Scene 002] M8 audio generated: 27.9s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_002.mp3
+2026-03-01 01:42:07,330 │ INFO    │   [Scene 002] Audio complete: 27.9s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_002.mp3
+2026-03-01 01:42:07,330 │ INFO    │   [Scene 002] Starting Code Stream...
+2026-03-01 01:42:07,331 │ INFO    │   [Scene 002] M9 (Manim Coder) — Generating code...
+2026-03-01 01:42:07,331 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:07,331 │ DEBUG   │   System prompt length: 717 chars
+2026-03-01 01:42:07,331 │ DEBUG   │   User prompt length:   5539 chars
+2026-03-01 01:42:14,250 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → ✓ Response received (816 chars, 6.9s)
+2026-03-01 01:42:14,251 │ INFO    │   ✓ Output validation passed for M9 (format: python_code)
+2026-03-01 01:42:14,253 │ DEBUG   │   Response preview: from manim import *
+
+class Scene002(Scene):
+    def construct(self):
+        title = Text("Factoring the Numerator", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+...
+2026-03-01 01:42:14,253 │ INFO    │   [Scene 002] M9 generated code (802 chars)
+2026-03-01 01:42:14,254 │ INFO    │   [Scene 002] M10 (Code Reviewer) — Reviewing for errors...
+2026-03-01 01:42:14,255 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:14,256 │ DEBUG   │   System prompt length: 636 chars
+2026-03-01 01:42:14,256 │ DEBUG   │   User prompt length:   1790 chars
+2026-03-01 01:42:19,002 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → ✓ Response received (825 chars, 4.7s)
+2026-03-01 01:42:19,003 │ INFO    │   ✓ Output validation passed for M10 (format: python_code)
+2026-03-01 01:42:19,003 │ DEBUG   │   Response preview: from manim import *
+
+class Scene002(Scene):
+    def construct(self):
+        title = Text("Factoring the Numerator", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+...
+2026-03-01 01:42:19,003 │ INFO    │   [Scene 002] M10 reviewed code (811 chars)
+2026-03-01 01:42:19,005 │ INFO    │   [Scene 002] Code saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scenes\scene_002.py
+2026-03-01 01:42:19,005 │ INFO    │   [Scene 002] Synchronizing audio-visual timing...
+2026-03-01 01:42:19,019 │ INFO    │   Adjusted final self.wait() to 27.9s
+2026-03-01 01:42:19,021 │ INFO    │   [Scene 002] ✓ Scene complete!
+2026-03-01 01:42:19,022 │ INFO    │ 
+2026-03-01 01:42:19,022 │ INFO    │ ─── Scene 003 (3/5) ───
+2026-03-01 01:42:19,023 │ INFO    │   [Scene 003] Starting Audio Stream...
+2026-03-01 01:42:19,023 │ INFO    │   [Scene 003] M7 (Narration Writer) — Polishing voiceover...
+2026-03-01 01:42:19,024 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:19,024 │ DEBUG   │   System prompt length: 692 chars
+2026-03-01 01:42:19,024 │ DEBUG   │   User prompt length:   1153 chars
+2026-03-01 01:42:22,947 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → ✓ Response received (389 chars, 3.9s)
+2026-03-01 01:42:22,948 │ INFO    │   ✓ Output validation passed for M7 (format: text)
+2026-03-01 01:42:22,948 │ DEBUG   │   Response preview: Now that we have x plus 2, times x minus 2, all over x minus 2, Notice that we can simplify this fraction by canceling the common factor, x minus 2, from the numerator and the denominator. This leaves...
+2026-03-01 01:42:22,948 │ INFO    │   [Scene 003] M7 polished narration (389 chars)
+2026-03-01 01:42:22,948 │ INFO    │   [Scene 003] M8 (TTS) — Generating audio...
+2026-03-01 01:42:27,134 │ INFO    │   [Scene 003] M8 audio generated: 25.9s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_003.mp3
+2026-03-01 01:42:27,134 │ INFO    │   [Scene 003] Audio complete: 25.9s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_003.mp3
+2026-03-01 01:42:27,135 │ INFO    │   [Scene 003] Starting Code Stream...
+2026-03-01 01:42:27,135 │ INFO    │   [Scene 003] M9 (Manim Coder) — Generating code...
+2026-03-01 01:42:27,135 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:27,135 │ DEBUG   │   System prompt length: 717 chars
+2026-03-01 01:42:27,135 │ DEBUG   │   User prompt length:   5440 chars
+2026-03-01 01:42:33,241 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → ✓ Response received (1018 chars, 6.1s)
+2026-03-01 01:42:33,242 │ INFO    │   ✓ Output validation passed for M9 (format: python_code)
+2026-03-01 01:42:33,242 │ DEBUG   │   Response preview: from manim import *
+
+class Scene003(Scene):
+    def construct(self):
+        title = Text("Canceling Common Factors", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)...
+2026-03-01 01:42:33,242 │ INFO    │   [Scene 003] M9 generated code (1004 chars)
+2026-03-01 01:42:33,242 │ INFO    │   [Scene 003] M10 (Code Reviewer) — Reviewing for errors...
+2026-03-01 01:42:33,243 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:33,243 │ DEBUG   │   System prompt length: 636 chars
+2026-03-01 01:42:33,243 │ DEBUG   │   User prompt length:   1992 chars
+2026-03-01 01:42:38,229 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → ✓ Response received (1020 chars, 5.0s)
+2026-03-01 01:42:38,229 │ INFO    │   ✓ Output validation passed for M10 (format: python_code)
+2026-03-01 01:42:38,229 │ DEBUG   │   Response preview: from manim import *
+
+class Scene003(Scene):
+    def construct(self):
+        title = Text("Canceling Common Factors", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)...
+2026-03-01 01:42:38,229 │ INFO    │   [Scene 003] M10 reviewed code (1006 chars)
+2026-03-01 01:42:38,231 │ INFO    │   [Scene 003] Code saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scenes\scene_003.py
+2026-03-01 01:42:38,231 │ INFO    │   [Scene 003] Synchronizing audio-visual timing...
+2026-03-01 01:42:38,248 │ INFO    │   Adjusted final self.wait() to 25.9s
+2026-03-01 01:42:38,249 │ INFO    │   [Scene 003] ✓ Scene complete!
+2026-03-01 01:42:38,249 │ INFO    │ 
+2026-03-01 01:42:38,249 │ INFO    │ ─── Scene 004 (4/5) ───
+2026-03-01 01:42:38,249 │ INFO    │   [Scene 004] Starting Audio Stream...
+2026-03-01 01:42:38,249 │ INFO    │   [Scene 004] M7 (Narration Writer) — Polishing voiceover...
+2026-03-01 01:42:38,251 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:38,251 │ DEBUG   │   System prompt length: 692 chars
+2026-03-01 01:42:38,251 │ DEBUG   │   User prompt length:   1164 chars
+2026-03-01 01:42:42,033 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → ✓ Response received (346 chars, 3.8s)
+2026-03-01 01:42:42,035 │ INFO    │   ✓ Output validation passed for M7 (format: text)
+2026-03-01 01:42:42,035 │ DEBUG   │   Response preview: Now, observe that with our simplified expression, x plus 2, we can evaluate the limit as x approaches 2. Notice that the function, f of x, equals x plus 2, is continuous at x equals 2. This is importa...
+2026-03-01 01:42:42,035 │ INFO    │   [Scene 004] M7 polished narration (346 chars)
+2026-03-01 01:42:42,036 │ INFO    │   [Scene 004] M8 (TTS) — Generating audio...
+2026-03-01 01:42:44,627 │ INFO    │   [Scene 004] M8 audio generated: 26.0s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_004.mp3
+2026-03-01 01:42:44,628 │ INFO    │   [Scene 004] Audio complete: 26.0s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_004.mp3
+2026-03-01 01:42:44,628 │ INFO    │   [Scene 004] Starting Code Stream...
+2026-03-01 01:42:44,628 │ INFO    │   [Scene 004] M9 (Manim Coder) — Generating code...
+2026-03-01 01:42:44,629 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:44,629 │ DEBUG   │   System prompt length: 717 chars
+2026-03-01 01:42:44,629 │ DEBUG   │   User prompt length:   5459 chars
+2026-03-01 01:42:52,686 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → ✓ Response received (973 chars, 8.1s)
+2026-03-01 01:42:52,687 │ INFO    │   ✓ Output validation passed for M9 (format: python_code)
+2026-03-01 01:42:52,687 │ DEBUG   │   Response preview: from manim import *
+
+class Scene004(Scene):
+    def construct(self):
+        title = Text("Evaluating the Limit", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+   ...
+2026-03-01 01:42:52,687 │ INFO    │   [Scene 004] M9 generated code (959 chars)
+2026-03-01 01:42:52,687 │ INFO    │   [Scene 004] M10 (Code Reviewer) — Reviewing for errors...
+2026-03-01 01:42:52,687 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:52,687 │ DEBUG   │   System prompt length: 636 chars
+2026-03-01 01:42:52,688 │ DEBUG   │   User prompt length:   1947 chars
+2026-03-01 01:42:57,418 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → ✓ Response received (988 chars, 4.7s)
+2026-03-01 01:42:57,419 │ INFO    │   ✓ Output validation passed for M10 (format: python_code)
+2026-03-01 01:42:57,419 │ DEBUG   │   Response preview: from manim import *
+
+class Scene004(Scene):
+    def construct(self):
+        title = Text("Evaluating the Limit", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+   ...
+2026-03-01 01:42:57,419 │ INFO    │   [Scene 004] M10 reviewed code (974 chars)
+2026-03-01 01:42:57,420 │ INFO    │   [Scene 004] Code saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scenes\scene_004.py
+2026-03-01 01:42:57,420 │ INFO    │   [Scene 004] Synchronizing audio-visual timing...
+2026-03-01 01:42:57,436 │ INFO    │   Adjusted final self.wait() to 26.0s
+2026-03-01 01:42:57,438 │ INFO    │   [Scene 004] ✓ Scene complete!
+2026-03-01 01:42:57,438 │ INFO    │ 
+2026-03-01 01:42:57,439 │ INFO    │ ─── Scene 005 (5/5) ───
+2026-03-01 01:42:57,439 │ INFO    │   [Scene 005] Starting Audio Stream...
+2026-03-01 01:42:57,439 │ INFO    │   [Scene 005] M7 (Narration Writer) — Polishing voiceover...
+2026-03-01 01:42:57,439 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:42:57,441 │ DEBUG   │   System prompt length: 692 chars
+2026-03-01 01:42:57,441 │ DEBUG   │   User prompt length:   1143 chars
+2026-03-01 01:43:00,972 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M7] → ✓ Response received (451 chars, 3.5s)
+2026-03-01 01:43:00,972 │ INFO    │   ✓ Output validation passed for M7 (format: text)
+2026-03-01 01:43:00,972 │ DEBUG   │   Response preview: Therefore, we have shown that the limit as x approaches 2 of x squared minus 4 over x minus 2, equals the limit as x approaches 2 of x plus 2, which equals 4. Notice that this demonstrates the origina...
+2026-03-01 01:43:00,972 │ INFO    │   [Scene 005] M7 polished narration (451 chars)
+2026-03-01 01:43:00,972 │ INFO    │   [Scene 005] M8 (TTS) — Generating audio...
+2026-03-01 01:43:04,127 │ INFO    │   [Scene 005] M8 audio generated: 30.7s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_005.mp3
+2026-03-01 01:43:04,127 │ INFO    │   [Scene 005] Audio complete: 30.7s → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\audio\scene_005.mp3
+2026-03-01 01:43:04,128 │ INFO    │   [Scene 005] Starting Code Stream...
+2026-03-01 01:43:04,128 │ INFO    │   [Scene 005] M9 (Manim Coder) — Generating code...
+2026-03-01 01:43:04,128 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:43:04,128 │ DEBUG   │   System prompt length: 717 chars
+2026-03-01 01:43:04,128 │ DEBUG   │   User prompt length:   5468 chars
+2026-03-01 01:43:11,193 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M9] → ✓ Response received (1141 chars, 7.1s)
+2026-03-01 01:43:11,193 │ INFO    │   ✓ Output validation passed for M9 (format: python_code)
+2026-03-01 01:43:11,194 │ DEBUG   │   Response preview: from manim import *
+
+class Scene005(Scene):
+    def construct(self):
+        title = Text("Conclusion", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+        self....
+2026-03-01 01:43:11,194 │ INFO    │   [Scene 005] M9 generated code (1127 chars)
+2026-03-01 01:43:11,195 │ INFO    │   [Scene 005] M10 (Code Reviewer) — Reviewing for errors...
+2026-03-01 01:43:11,195 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → Sending request (attempt 1/3, primary)...
+2026-03-01 01:43:11,195 │ DEBUG   │   System prompt length: 636 chars
+2026-03-01 01:43:11,195 │ DEBUG   │   User prompt length:   2115 chars
+2026-03-01 01:43:15,957 │ INFO    │ [GROQ] [llama-3.3-70b-versatile] [M10] → ✓ Response received (1143 chars, 4.8s)
+2026-03-01 01:43:15,958 │ INFO    │   ✓ Output validation passed for M10 (format: python_code)
+2026-03-01 01:43:15,959 │ DEBUG   │   Response preview: from manim import *
+
+class Scene005(Scene):
+    def construct(self):
+        title = Text("Conclusion", font_size=40, color=YELLOW)
+        self.play(Write(title))
+        self.wait(0.5)
+        self....
+2026-03-01 01:43:15,959 │ INFO    │   [Scene 005] M10 reviewed code (1129 chars)
+2026-03-01 01:43:15,962 │ INFO    │   [Scene 005] Code saved → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\scenes\scene_005.py
+2026-03-01 01:43:15,963 │ INFO    │   [Scene 005] Synchronizing audio-visual timing...
+2026-03-01 01:43:16,003 │ INFO    │   Adjusted final self.wait() to 30.7s
+2026-03-01 01:43:16,005 │ INFO    │   [Scene 005] ✓ Scene complete!
+2026-03-01 01:43:16,005 │ INFO    │ 
+2026-03-01 01:43:16,005 │ INFO    │ PHASE III COMPLETE: 5 succeeded, 0 failed out of 5 scenes.
+2026-03-01 01:43:16,009 │ INFO    │ ============================================================
+2026-03-01 01:43:16,009 │ INFO    │ ASSEMBLY: Building Final Video
+2026-03-01 01:43:16,013 │ INFO    │ ============================================================
+2026-03-01 01:43:16,013 │ INFO    │   Rendering scene 001...
+2026-03-01 01:43:16,023 │ INFO    │   [Sanitizer] Auto-fixed common issues in scene_001.py
+2026-03-01 01:43:16,048 │ INFO    │   [Scene 001] Rendering with Manim (attempt 1/3)...
+2026-03-01 01:44:30,632 │ INFO    │   [Scene 001] ✓ Rendered → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\videos\scene_001\1080p60\Scene001.mp4 (1265 KB)
+2026-03-01 01:44:30,633 │ INFO    │   Merging: Scene001.mp4 + scene_001.mp3
+2026-03-01 01:44:51,617 │ INFO    │   ✓ Merged → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\merged_001.mp4
+2026-03-01 01:44:51,618 │ INFO    │   Rendering scene 002...
+2026-03-01 01:44:51,695 │ INFO    │   [Sanitizer] Auto-fixed common issues in scene_002.py
+2026-03-01 01:44:51,712 │ INFO    │   [Scene 002] Rendering with Manim (attempt 1/3)...
+2026-03-01 01:46:28,193 │ INFO    │   [Scene 002] ✓ Rendered → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\videos\scene_002\1080p60\Scene002.mp4 (1312 KB)
+2026-03-01 01:46:28,193 │ INFO    │   Merging: Scene002.mp4 + scene_002.mp3
+2026-03-01 01:46:47,087 │ INFO    │   ✓ Merged → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\merged_002.mp4
+2026-03-01 01:46:47,088 │ INFO    │   Rendering scene 003...
+2026-03-01 01:46:47,156 │ INFO    │   [Sanitizer] Auto-fixed common issues in scene_003.py
+2026-03-01 01:46:47,194 │ INFO    │   [Scene 003] Rendering with Manim (attempt 1/3)...
+2026-03-01 01:48:14,644 │ INFO    │   [Scene 003] ✓ Rendered → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\videos\scene_003\1080p60\Scene003.mp4 (1116 KB)
+2026-03-01 01:48:14,646 │ INFO    │   Merging: Scene003.mp4 + scene_003.mp3
+2026-03-01 01:48:32,069 │ INFO    │   ✓ Merged → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\merged_003.mp4
+2026-03-01 01:48:32,071 │ INFO    │   Rendering scene 004...
+2026-03-01 01:48:32,103 │ INFO    │   [Sanitizer] Auto-fixed common issues in scene_004.py
+2026-03-01 01:48:32,130 │ INFO    │   [Scene 004] Rendering with Manim (attempt 1/3)...
+2026-03-01 01:50:06,427 │ INFO    │   [Scene 004] ✓ Rendered → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\videos\scene_004\1080p60\Scene004.mp4 (1167 KB)
+2026-03-01 01:50:06,428 │ INFO    │   Merging: Scene004.mp4 + scene_004.mp3
+2026-03-01 01:50:24,081 │ INFO    │   ✓ Merged → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\merged_004.mp4
+2026-03-01 01:50:24,081 │ INFO    │   Rendering scene 005...
+2026-03-01 01:50:24,087 │ INFO    │   [Sanitizer] Auto-fixed common issues in scene_005.py
+2026-03-01 01:50:24,115 │ INFO    │   [Scene 005] Rendering with Manim (attempt 1/3)...
+2026-03-01 01:51:52,549 │ INFO    │   [Scene 005] ✓ Rendered → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\videos\scene_005\1080p60\Scene005.mp4 (1290 KB)
+2026-03-01 01:51:52,550 │ INFO    │   Merging: Scene005.mp4 + scene_005.mp3
+2026-03-01 01:52:13,053 │ INFO    │   ✓ Merged → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\video\merged_005.mp4
+2026-03-01 01:52:13,054 │ INFO    │   Concatenating 5 scenes...
+2026-03-01 01:53:34,259 │ INFO    │   ✓ Final video → D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\final\final_video.mp4
+2026-03-01 01:53:34,261 │ INFO    │ 
+2026-03-01 01:53:34,262 │ INFO    │ ============================================================
+2026-03-01 01:53:34,262 │ INFO    │   FINAL VIDEO READY: D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\final\final_video.mp4
+2026-03-01 01:53:34,264 │ INFO    │   Total scenes: 5/5
+2026-03-01 01:53:34,264 │ INFO    │ ============================================================

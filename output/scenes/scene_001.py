@@ -2,29 +2,28 @@ from manim import *
 
 class Scene001(Scene):
     def construct(self):
-        title = Text("Introduction to the Pythagorean Theorem", font_size=40, color=YELLOW)
+        title = Text("Introduction to Limits", font_size=40, color=YELLOW)
         self.play(Write(title))
         self.wait(0.5)
         self.play(title.animate.to_edge(UP).scale(0.7))
 
-        triangle = Polygon(ORIGIN, RIGHT*2, UP*2, color=BLUE)
-        self.play(Create(triangle))
-        self.wait(0.5)
-
-        a_label = Text("a", font_size=24).next_to(triangle, LEFT)
-        b_label = Text("b", font_size=24).next_to(triangle, DOWN)
-        c_label = Text("c", font_size=24).next_to(triangle, RIGHT)
-        self.play(Write(a_label), Write(b_label), Write(c_label))
-        self.wait(0.5)
-
-        eq = Text("c^2 = a^2 + b^2", font_size=48)
+        eq = Text("\\lim_{x \\to a} f(x)", font_size=48)
         self.play(Write(eq))
         self.wait(0.5)
 
-        explanation = Text("The Pythagorean theorem relates the lengths of the sides of a right-angled tr...", font_size=24)
+        axes = Axes(x_range=[-5, 5], y_range=[-5, 5])
+        self.play(Create(axes))
+
+        func = lambda x: (x**2 - 4) / (x - 2) if x != 2 else 4
+        graph = axes.plot(func, x_range=[-5, 5], color=BLUE)
+        self.play(Create(graph))
+
+        explanation = Text("The limit of a function $f(x)$ as $x$ approaches $a$ is denoted by $\\lim_{x ...", font_size=24)
         self.play(FadeIn(explanation))
+
+        specific_eq = Text("\\lim_{x \\to 2} \\frac{x^2 - 4}{x - 2}", font_size=36)
+        self.play(Write(specific_eq))
         self.wait(0.5)
 
-        self.wait(30)
+        self.wait(29.2)
         self.play(*[FadeOut(mob) for mob in self.mobjects])
-        self.wait(35.7)

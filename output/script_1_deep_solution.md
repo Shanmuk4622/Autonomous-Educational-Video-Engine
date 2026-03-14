@@ -1,30 +1,36 @@
 VERIFIED ✓
 ## Definitions
-To prove the Pythagorean theorem without trigonometry, we first need to understand the key concepts involved. The Pythagorean theorem relates the lengths of the sides of a right-angled triangle. A right-angled triangle is a triangle with one angle that measures $90^\circ$. The side opposite the right angle is called the hypotenuse, and the other two sides are referred to as the legs of the triangle. The Pythagorean theorem states that in a right-angled triangle, the square of the length of the hypotenuse ($c$) is equal to the sum of the squares of the lengths of the other two sides ($a$ and $b$), or $c^2 = a^2 + b^2$. The length of a side can be represented as $a$, $b$, or $c$, with $c$ being the length of the hypotenuse.
+To approach this problem, we first need to understand the given statement and what it's asking us to prove. The statement involves a limit, specifically:
+\[ \lim_{x \to a} f(x) = L \]
+This means that as $x$ approaches $a$, the function $f(x)$ approaches the value $L$. In our case, we're given:
+\[ \lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2) \]
+We need to define what a limit is and how it applies to the given function. The limit of a function $f(x)$ as $x$ approaches $a$ is denoted by $\lim_{x \to a} f(x)$ and represents the value that $f(x)$ approaches as $x$ gets arbitrarily close to $a$.
 
 ## Solution
-To prove the Pythagorean theorem without using trigonometry, we can use geometric methods. One common approach is to use the concept of similar triangles and areas of squares.
+To prove that $\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2)$, we'll follow these steps:
 
-### Step 1: Constructing Squares on Each Side
-We start by constructing a square on each side of the right-angled triangle. Let's denote the lengths of the two legs as $a$ and $b$, and the length of the hypotenuse as $c$. We construct squares with sides $a$, $b$, and $c$. The area of a square with side length $s$ is given by $s^2$.
+### Step 1: Factor the Numerator
+First, let's factor the numerator of the fraction $\frac{x^2 - 4}{x - 2}$. The numerator can be factored as a difference of squares:
+\[ x^2 - 4 = (x + 2)(x - 2) \]
+So, the expression becomes:
+\[ \frac{(x + 2)(x - 2)}{x - 2} \]
 
-### Step 2: Understanding the Areas of the Squares
-The area of the square on side $a$ is $a^2$, the area of the square on side $b$ is $b^2$, and the area of the square on the hypotenuse $c$ is $c^2$. We aim to show that $c^2 = a^2 + b^2$ through geometric reasoning.
+### Step 2: Cancel Common Factors
+Now, we notice that $(x - 2)$ is present in both the numerator and the denominator. As long as $x \neq 2$, we can cancel these factors:
+\[ \frac{(x + 2)(x - 2)}{x - 2} = x + 2 \]
+This simplification is valid for all $x \neq 2$, which is acceptable when dealing with limits because the limit as $x$ approaches $2$ does not depend on the value of the function at $x = 2$ itself.
 
-### Step 3: Using Geometric Reasoning to Relate Areas
-Consider the right-angled triangle with legs $a$ and $b$, and hypotenuse $c$. If we draw the altitude from the right angle to the hypotenuse, it divides the triangle into two smaller right-angled triangles, each similar to the original triangle and to each other. Let's denote the point where the altitude meets the hypotenuse as $D$. The length of the altitude is denoted as $h$. The two smaller triangles, $\triangle ADB$ and $\triangle BDC$, are similar to the original triangle $\triangle ABC$ and to each other.
+### Step 3: Evaluate the Limit
+Given the simplified expression $x + 2$, we can now evaluate the limit as $x$ approaches $2$:
+\[ \lim_{x \to 2} (x + 2) \]
+Substituting $x = 2$ into the expression $x + 2$ gives us:
+\[ \lim_{x \to 2} (x + 2) = 2 + 2 = 4 \]
+To understand why we can directly substitute $x = 2$ into $x + 2$ to find the limit, recall that the function $f(x) = x + 2$ is continuous at $x = 2$. For continuous functions, the limit as $x$ approaches $a$ is equal to $f(a)$.
 
-### Step 4: Relating Altitude to Areas
-The area $A$ of a triangle with base $b$ and height $h$ is given by $A = \frac{1}{2}bh$. For our triangle $\triangle ABC$, $A = \frac{1}{2}ab$. The area of $\triangle ADB$ is $\frac{1}{2}ah_1$ and the area of $\triangle BDC$ is $\frac{1}{2}bh_2$, where $h_1$ and $h_2$ are the lengths of the segments of the altitude in each of the smaller triangles. However, because $\triangle ADB$ and $\triangle BDC$ are similar to $\triangle ABC$, and given that $h_1 + h_2 = h$, we can relate these areas to the sides of the triangle.
-
-### Step 5: Demonstrating Equality of Areas
-By considering the areas of the squares and the relationship between the areas of the triangle and the squares, we can demonstrate the equality $c^2 = a^2 + b^2$. This involves showing that the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides, which can be achieved through geometric transformations and comparisons of areas.
-
-### Step 6: Geometric Transformation
-Imagine rearranging the four triangles formed by the altitude (two of which are the smaller triangles similar to the original triangle, and two that are their reflections) to fit exactly into the square on the hypotenuse. This rearrangement shows that the area of the square on $c$ is equal to the area of the square on $a$ plus the area of the square on $b$, because the total area of the four triangles (which equals the area of the square on $c$) is also equal to the sum of the areas of the squares on $a$ and $b$. To see this clearly, consider that the area of the square on side $a$ is $a^2$, and the area of the square on side $b$ is $b^2$. The area of the square on the hypotenuse $c$ can be represented as $c^2$. By visually rearranging the areas, we can demonstrate that $c^2 = a^2 + b^2$.
-
-### Step 7: Visualizing the Proof
-To visualize the proof, consider the following geometric construction: Draw the squares on each side of the right-angled triangle as described. Then, draw the altitude from the right angle to the hypotenuse, dividing the triangle into two smaller triangles. Rearrange the four triangles (the two smaller triangles and their reflections) to fit into the square on the hypotenuse. This visual representation helps to illustrate how the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides, thus demonstrating the Pythagorean theorem.
+### Step 4: Conclusion of the Limit Evaluation
+From Step 3, we see that as $x$ approaches $2$, the value of $x + 2$ approaches $4$. This means:
+\[ \lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2) = 4 \]
+Therefore, we have shown that the original limit statement is true, with both sides of the equation approaching the value $4$ as $x$ approaches $2$.
 
 ## Conclusion
-The Pythagorean theorem, $c^2 = a^2 + b^2$, can be proven without using trigonometry by considering the areas of squares constructed on each side of a right-angled triangle and demonstrating through geometric reasoning and transformations that the area of the square on the hypotenuse is equal to the sum of the areas of the squares on the other two sides. This proof highlights the geometric basis of the theorem and provides a visual, intuitive understanding of why the relationship between the lengths of the sides of a right-angled triangle holds. The use of similar triangles, areas, and geometric transformations provides a comprehensive and pedagogical approach to understanding this fundamental concept in geometry.
+In conclusion, we have shown that $\lim_{x \to 2} \frac{x^2 - 4}{x - 2} = \lim_{x \to 2} (x + 2)$ by factoring the numerator, canceling common factors, and then evaluating the limit of the simplified expression. This demonstrates that the original limit statement is true, with both sides of the equation approaching the value $4$ as $x$ approaches $2$. Therefore, we have successfully proven the given statement using basic principles of algebra and limit evaluation.
