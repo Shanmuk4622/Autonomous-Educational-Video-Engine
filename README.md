@@ -1,127 +1,267 @@
 # Autonomous Educational Video Engine (AEVE)
 
-Welcome to the **Autonomous Educational Video Engine (AEVE)**! AEVE is a fully autonomous, AI-driven pipeline that transforms a single multi-modal input (Image or Text) into a high-fidelity, synchronized mathematical animation using the Manim engine and professional-grade TTS narration.
+AEVE turns a single prompt — *"Prove the Pythagorean theorem"* — into a
+synchronized educational video: Manim animations, edge-TTS narration, and a
+single `.mp4` you can play. It runs entirely locally with free / low-cost LLM
+providers (Groq, OpenRouter) and no Anthropic dependency.
 
-## 🌟 Overview
-AEVE is designed to be the ultimate AI tutor video generator. Instead of a single LLM attempting to write a script and code an animation at the same time (which frequently fails), AEVE uses a **10-agent LLM Orchestration Pipeline**. These agents debate, refine, and write code in distinct phases—ranging from initial mathematical problem-solving to Manim code generation and rendering error auto-recovery.
-
-The output is a fully assembled `.mp4` video with smooth animations, beautifully rendered LaTeX equations (via Manim), and perfectly timed audio narration.
-
----
-
-## 🚀 Features
-- **10-Model Multi-Agent Architecture**: Dedicated AI personas for solving math, storyboarding, writing Manim code, and reviewing errors.
-- **Robust Manim Auto-Fixing**: If a generated Manim script crashes during rendering, the error is caught, intelligently filtered, and sent to an AI "Code Reviewer" (M10) to automatically fix the Python code and retry.
-- **Dynamic API Key Rotation**: Automatically rotates between multiple Groq API keys to elegantly handle `429 Rate Limit` errors during massive parallel generation tasks.
-- **Automated Media Assembly**: Programmatically stitches together partial video segments and aligns them with TTS narration without relying on external GUI video editors.
-- **Web Interface**: A sleek Flask-based frontend for monitoring pipeline progress in real-time via Server-Sent Events (SSE).
-
----
-
-## 🛠️ Prerequisites
-Before running AEVE, ensure you have the following installed on your machine:
-
-1. **Anaconda / Miniconda**: Highly recommended for managing Python environments.
-2. **Python 3.10+**: The pipeline requires modern Python features.
-3. **FFmpeg**: Required for media concatenation.
-   * *Windows Users*: AEVE works best when FFmpeg is explicitly defined in your environment path or patched directly in the conda `Library/bin` folder.
-4. **Manim Community Edition (v0.19+)**: The core rendering engine for the mathematical visuals.
+> **Status (2026-05-03):** AEVE 2.0 is **the default** for both the CLI
+> and the web UI. The 5-agent pipeline (Solver → Director → Narrator+TTS
+> → Animator → Render+Healer → Assembler) lands a final video end-to-end
+> with Pydantic-gated phase boundaries and a 50 ms drift budget. Legacy
+> AEVE 1.0 (10 agents) is preserved behind explicit opt-ins
+> (`--legacy` flag for CLI, `mode=legacy` form field for the web)
+> during the side-by-side period and will be retired in Day 7. See
+> `ORCHESTRATION.md` for the agent contract and `CLAUDE.md` for the
+> rewrite spec.
 
 ---
 
-## 📥 Installation
+## Why this exists
 
-1. **Clone the Repository**
-2. **Create the Conda Environment**
-   Open your terminal (Anaconda Prompt or PowerShell) and run:
-   ```bash
-   conda create -n cv_conda python=3.10 -y
-   conda activate cv_conda
-   ```
-3. **Install Dependencies**
-   Install Manim and other required Python packages:
-   ```bash
-   pip install -r requirements.txt
-   ```
-   *(Ensure you have PyAV and pure-python dependencies for the latest Manim version installed).*
+A single LLM trying to write a mathematical script + Manim code at the same
+time fails reliably:
 
-4. **Configure API Keys**
-   AEVE relies on external LLM providers (primarily Groq and OpenRouter).
-   * Open `config.py`.
-   * Locate the `GROQ_API_KEYS` list.
-   * Add your API keys:
-     ```python
-     GROQ_API_KEYS = [
-         "gsk_YOUR_FIRST_KEY",
-         "gsk_YOUR_SECOND_KEY", # Optional: for rate limit rotation
-     ]
-     OPENROUTER_API_KEY = "sk-or-v1-..."
-     ```
-   * *Note: `config.py` is safely ignored in `.gitignore` so you don't accidentally push your secrets.*
+* **Voice and video drift** — narration ends, animation keeps playing
+  (or vice versa), scene to scene the gap compounds.
+* **Animations look poor** — everything anchored at the origin, text
+  truncated mid-sentence, MathTex falling back to plain Text because LaTeX
+  isn't installed.
+* **Crashes mid-render** are caught with insufficient context — the LLM
+  gets 800 chars of error and guesses.
+
+AEVE 2.0 fixes those structurally: every phase is gated by a Pydantic
+schema, every per-scene runtime is gated by an AST predictor against the
+ffprobe-measured audio duration, and every render failure ships the full
+last-4 KB stderr to a dedicated Healer agent — with a deterministic
+fallback scene as the floor so a single bad scene can never block the
+pipeline.
 
 ---
 
-## 🎮 How to Use the Engine
+## Architecture (AEVE 2.0)
 
-### 1. Start the Server
-Activate your conda environment and run the main Flask application:
-```bash
+```
+Phase 0  StyleManifest         deterministic Python (no LLM)
+Phase 1  Solver       (S)      math reasoning      → DeepSolution
+Phase 2  Director     (D)      scene plan          → Storyboard
+Phase 3  Narrator+TTS (N+E)    spoken + word timeline → SceneAudio[]
+Phase 4  Animator     (A)      AST-validated Manim → SceneCode[]
+Phase 5  Render+Healer (R+H)   render w/ retry + drift correction → SceneVideo[]
+Phase 6  Assembler             normalize-then-concat ffmpeg → FinalVideo
+```
+
+Phases 3-5 fan out per-scene under `asyncio.Semaphore(4)` for LLM calls and
+`asyncio.Semaphore(2)` for render subprocesses. Within a scene the order is
+forced (Animator needs the audio's measured duration, Render needs the
+animator's code). Every phase boundary is a `Model.model_validate(...)`
+call; on validation failure, one repair round is attempted with the error
+injected back into the prompt before falling through to the next provider
+in the model's fallback chain.
+
+**A/V sync solution.** Drift budget: 50 ms per scene, 50 ms across the
+final. Sources of truth in order: ffprobe (authoritative), then AST
+predictor (gating), then LLM. We never use `-shortest` (the legacy bug
+that truncated audio mid-sentence). See `CLAUDE.md` for the full list.
+
+---
+
+## Prerequisites
+
+| Tool | Why | Install |
+|---|---|---|
+| Anaconda / Miniconda | Manages the Python env | https://docs.conda.io |
+| Python 3.10–3.12 | Pinned in `pyproject.toml` | conda |
+| FFmpeg + ffprobe | Concat + duration probe | conda-forge or system |
+| Manim CE 0.19.* | The renderer | pip |
+| MiKTeX (optional) | LaTeX for `MathTex` — soft requirement | conda or winget |
+
+Run `python setup_check.py` after installation to verify everything's
+reachable; it prints per-tool status with install hints for whatever's
+missing.
+
+---
+
+## Installation
+
+```powershell
+# 1. Create + activate the env
+conda create -n cv_conda python=3.10 -y
+conda activate cv_conda
+
+# 2. Install the package + deps
+pip install -e ".[dev]"
+
+# 3. Verify
+python setup_check.py
+
+# 4. Optional: install MiKTeX for high-quality MathTex
+python setup_check.py --install-miktex
+```
+
+**API keys.** Open `config.py` and paste in your keys (gitignored — keys
+never reach the remote):
+
+```python
+GROQ_API_KEYS = [
+    "gsk_YOUR_FIRST_KEY",
+    "gsk_YOUR_SECOND_KEY",   # multiple keys → automatic rotation on 429
+]
+OPENROUTER_API_KEY = "sk-or-v1-..."
+GOOGLE_API_KEY = "AIza..."   # optional fallback
+```
+
+---
+
+## Running it
+
+### CLI (default = AEVE 2.0)
+
+```powershell
+conda activate cv_conda
+python main.py "Prove the Pythagorean theorem" --target-seconds 60
+python main.py --image path/to/diagram.png "Explain this image"
+python main.py "Derive the quadratic formula" --output-dir ./run01
+```
+
+`main.py` now defaults to AEVE 2.0. Pass `--legacy` to use the AEVE 1.0
+10-agent pipeline (with `--quality {low,medium,high,4k}` honored).
+
+### CLI smoke harness (AEVE 2.0 only)
+
+```powershell
+python -m pipeline.orchestrator "Prove the Pythagorean theorem" --target-seconds 60
+```
+
+This is the same code path as `python main.py "..."` (no `--legacy`),
+exposed as a module so it's easy to import and instrument from tests.
+Prints a per-scene report:
+
+```
+=== AEVE 2.0 phases 0-6 complete ===
+topic:       Pythagorean theorem
+difficulty:  intermediate
+scenes:      5
+target:      60s
+audio total: 58.42s
+final mp4:   D:\...\output\final\final.mp4
+final dur:   58.45s (drift +30ms)
+  scene 001: audio=10.20s predicted=10.10s rendered=10.21s (drift +10ms)
+  scene 002: audio=12.50s predicted=12.50s rendered=12.50s (drift +0ms, healer x1)
+  ...
+```
+
+### Web UI
+
+```powershell
 conda activate cv_conda
 python app.py
 ```
 
-### 2. Access the Web Interface
-Open your web browser and navigate to:
+Open http://localhost:5000. The browser-streamed Server-Sent Events
+show six `phase` events (`phase0` … `phase6`) plus per-line log output.
+The default is AEVE 2.0; pass `mode=legacy` in the form data to use the
+legacy 10-agent pipeline (the form's `quality` field is honored in
+legacy mode and ignored in v2).
+
+---
+
+## Output layout
+
 ```
-http://localhost:5000
+output/
+├── style_manifest.json          # AEVE 2.0 — deterministic visual contract
+├── _style.py                    # AEVE 2.0 — generated Python constants
+├── audio/
+│   ├── scene_001.mp3            # narrated audio
+│   ├── scene_001.timeline.json  # word-level offsets from edge-tts WordBoundary
+│   └── …
+├── scenes/
+│   ├── scene_001.py             # generated Manim source
+│   ├── scene_001.carry.json     # per-scene carryover (Day 6+)
+│   └── …
+├── video/
+│   ├── scene_001.mp4            # per-scene rendered + audio-muxed
+│   └── _manim_media/            # raw Manim output (intermediates)
+├── final/
+│   └── final.mp4                # AEVE 2.0 — assembled final video
+└── logs/
+    └── pipeline.log             # full debug log
 ```
 
-### 3. Generate a Video
-1. On the web dashboard, enter a math problem or educational topic in the text field (e.g., *"Explain the Pythagorean Theorem"*).
-2. Click **Generate Video**.
-3. **Watch the live terminal feed** on the frontend UI. You will see the orchestration engine kick into gear, moving through Phase I (Knowledge Distillation), Phase II (Consensus), and Phase III (Generation & Assembly).
-4. Once completed, the final video will be available in the `output/final/` directory, ready to play!
+Legacy AEVE 1.0 also produces `script_1_deep_solution.md` and
+`scene_manifest.json` at the top of `output/`.
 
 ---
 
-## 🧠 How the Process Happens (High-Level Pipeline)
+## Project layout
 
-When you submit a prompt, the system does not immediately start writing Python code. It follows a rigorous, multi-stage pipeline:
+| Path | Role |
+|---|---|
+| `pipeline/orchestrator.py` | Top-level `run_pipeline()`; phases 0-6 |
+| `pipeline/schemas.py` | Pydantic v2 contracts gating every handoff |
+| `pipeline/style.py` | Phase 0 — deterministic StyleManifest builder |
+| `pipeline/solver.py` | Phase 1 — `solve(query) → DeepSolution` |
+| `pipeline/director.py` | Phase 2 — `direct(solution) → Storyboard` |
+| `pipeline/narrator.py` + `pipeline/tts.py` | Phase 3 — narration + edge-tts |
+| `pipeline/animator.py` | Phase 4 — Manim code generator + AST gates |
+| `pipeline/templates/` | Six fixed layout skeletons |
+| `pipeline/timing.py` | ffprobe + AST runtime predictor + pad/trim |
+| `pipeline/runtime.py` | `emit_carry()` — runtime helper called from generated scenes |
+| `pipeline/carryover.py` | `read_carry` / `write_carry` — cross-scene continuity |
+| `pipeline/llm_clients/` | Groq / OpenRouter / Gemini async clients + router |
+| `renderer/render.py` | Phase 5a — Manim subprocess + healer-aided retry |
+| `renderer/healer.py` | Phase 5b — `heal()` + deterministic fallback |
+| `renderer/sanitize.py` | Safe legacy-name renames + Polygon spread |
+| `renderer/assembler.py` | Phase 6 — normalize-then-concat (no `-shortest`) |
+| `setup_check.py` | Environment verifier (also `aeve-setup-check`) |
+| `tests/` | 165 unit tests; live tests gated behind `pytest -m live` |
+| `app.py`, `main.py` | Entry points — default to AEVE 2.0; legacy via `--legacy` / `mode=legacy` |
 
-### Phase I: Knowledge Distillation
-* **Goal**: Solve the math problem correctly.
-* The system receives the prompt. The **Solver** agent works out the step-by-step mathematical solution (Script 1).
-* The **Verifier** reviews the math for absolute accuracy. If a mistake is found, it is corrected before any video planning begins.
-
-### Phase II: The Consensus Committee
-* **Goal**: Plan the visual storyboard.
-* The raw mathematical solution is broken down into distinct "Scenes" (e.g., Introduction, Formula Definition, Visual Proof).
-* Agents add specific instruction tags for what objects should appear on screen (e.g., `Text`, `Circle`) and what the narrator should say.
-* The result is a strictly formatted **Scene Manifest (JSON)** containing 3–8 scenes.
-
-### Phase III: Generation & Assembly
-* **Goal**: Write the code, record the audio, and render.
-* For each scene in the manifest (processed concurrently):
-  1. **TTS Engine**: Generates the `.mp3` voiceover file and calculates exactly how long the animation must last.
-  2. **Manim Coder**: Writes the precise Python `manim` code for the visuals, ensuring the `self.wait()` times perfectly match the audio duration.
-  3. **Manim Renderer**: Attempts to execute the Python script.
-  4. **Auto-Fixing Loop**: If Manim crashes (e.g., syntax error, invalid attribute), the traceback is captured, cleaned, and sent back to the **Code Reviewer** agent. The agent writes a fixed version of the code, and Manim tries again. This loop runs up to 3 times per scene.
-* Finally, the **Assembler** merges the audio with the rendered video blocks, concatenating all the scenes into one cohesive, final `.mp4` educational video.
-
----
-
-## 🛠 Troubleshooting Common Issues
-
-* **`WinError 2: FileNotFoundError` during Rendering**:
-  Manim relies heavily on internal `subprocess` calls. If you see this error, ensure that FFmpeg is properly installed and accessible in the conda `PATH`. AEVE has built-in execution patches in `manim_runner.py` to auto-inject the active conda environment's library paths to resolve this.
-  Additionally, this can be triggered if Manim attempts to render LaTeX (`MathTex`) but a LaTeX distribution is missing. AEVE's prompts are designed to use standard `Text` to bypass this requirement dynamically.
-
-* **Groq Rate Limits (429 Error)**:
-  AEVE makes many parallel LLM calls. The engine automatically rotates keys if provided in the `GROQ_API_KEYS` list. Ensure you have at least 2 or 3 keys if you plan to generate massive 10-scene videos simultaneously.
-
-* **Poor Video Transitions**:
-  If the visual transitions between scenes feel abrupt (e.g., objects suddenly disappearing instead of fading out), ensure your LLM model is robust enough (like Claude 3.5 Sonnet or GPT-4o) to reliably follow the strict instructional prompt to wrap all final animations in a `FadeOut` operation.
+See `ORCHESTRATION.md` for the full per-agent contract (model routing,
+schemas, repair-round behavior).
 
 ---
 
-*Enjoy generating cutting-edge AI educational content with AEVE!*
+## Testing
+
+```powershell
+# Default: offline only
+pytest
+
+# With live LLM/edge-tts probes (consumes API quota)
+pytest -m live
+
+# Just one slice
+pytest tests/test_animator.py
+```
+
+The default suite is `165 passed, 5 deselected` and runs in ~7 s.
+
+---
+
+## Troubleshooting
+
+* **`manim: command not found`** — AEVE 2.0 invokes Manim via
+  `python -m manim`, so this only affects the legacy CLI. Run
+  `python setup_check.py` to confirm Manim is importable.
+* **Groq 429 rate limits** — drop more keys into `GROQ_API_KEYS`. The
+  client rotates on every 429.
+* **OpenRouter "model not found"** — the OpenRouter client probes
+  `/models` at startup and remaps deprecated slugs to the latest variant.
+  If the entire family is gone, the registry falls through to the next
+  spec in the agent's chain.
+* **MathTex looks rough** — LaTeX isn't installed. Run
+  `python setup_check.py --install-miktex` to attempt `conda` then
+  `winget` install. Failing that, the matplotlib MathTex backend takes
+  over (lower quality but doesn't crash).
+* **Final video has audible drift** — check
+  `output/logs/pipeline.log` for "drift" entries. The 50 ms budget is
+  enforced per-scene and across the final; over-budget logs an ERROR but
+  doesn't raise. Open an issue with the log + `output/final/<file>.mp4`.
+
+---
+
+## License
+
+Proprietary. See repository root.

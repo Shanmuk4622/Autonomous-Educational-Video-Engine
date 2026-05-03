@@ -1,0 +1,11 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(ls output/)",
+      "Bash(type .gitignore)",
+      "Read(//c/Users/shanm/anaconda3/Scripts/**)",
+      "Read(//c/Users/shanm/**)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/python.exe *)"
+    ]
+  }
+}

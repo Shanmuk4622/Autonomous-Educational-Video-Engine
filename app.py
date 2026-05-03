@@ -1,13 +1,19 @@
 """
-AEVE Web Frontend — Interactive web interface with real-time pipeline progress.
+AEVE Web Frontend — Flask + SSE.
 
-Features:
-- Text input or image upload
-- Real-time step-by-step progress via Server-Sent Events
-- Visual pipeline diagram showing current step
-- Final video playback
+By default `/start` runs the AEVE 2.0 pipeline (5 agents, 6 phases). Pass
+`mode=legacy` in the form data to fall back to the AEVE 1.0 10-agent
+pipeline during the side-by-side period.
+
+SSE events emitted:
+    {"type": "phase", "data": {"phase": "<id>", "status": "running"|"done", ...}}
+    {"type": "log",   "data": {"level": "info|warning|error", "message": ...}}
+    {"type": "complete", "data": {"video_path": "..."}}
+    {"type": "error",  "data": {"message": ..., "type": ...}}
+    {"type": "end",    "data": {}}
 """
 
+import asyncio
 import os
 import sys
 import json
@@ -52,8 +58,143 @@ def patched_logger_emit(job_id):
     return SSEHandler()
 
 
+# ---------------------------------------------------------------------------
+# AEVE 2.0 worker — calls each phase individually so SSE can show progress.
+# ---------------------------------------------------------------------------
+
+
+async def _run_aeve2_with_events(
+    job_id: str,
+    query: str,
+    *,
+    image_path: str | None,
+    target_seconds: int,
+):
+    """Drive AEVE 2.0 phases 0-6 with explicit SSE phase events.
+
+    This duplicates a small amount of orchestrator wiring so the UI can
+    show running/done per phase. The actual phase functions are imported
+    from `pipeline.orchestrator`; we don't reimplement them.
+    """
+    from pathlib import Path
+
+    from pipeline import orchestrator
+    from pipeline.director import direct
+    from pipeline.solver import solve
+    from pipeline.style import build_style_manifest, write_style_artifacts
+    from renderer.assembler import assemble
+
+    out = Path(config.OUTPUT_DIR)
+    audio_dir = out / "audio"
+    scenes_dir = out / "scenes"
+    video_dir = out / "video"
+    final_dir = out / "final"
+    out.mkdir(parents=True, exist_ok=True)
+
+    # Phase 0
+    emit_event(job_id, "phase", {"phase": "phase0", "status": "running",
+                                 "title": "Phase 0 — Style", "detail": "Building deterministic visual contract..."})
+    style = build_style_manifest()
+    write_style_artifacts(style, out)
+    emit_event(job_id, "phase", {"phase": "phase0", "status": "done",
+                                 "title": "Phase 0 — Style", "detail": f"palette + 6 layout zones"})
+
+    # Phase 1
+    emit_event(job_id, "phase", {"phase": "phase1", "status": "running",
+                                 "title": "Phase 1 — Solver", "detail": "Working out the math..."})
+    image_hint = f"User uploaded an image: {image_path}" if image_path else None
+    solution = await solve(query, image_hint=image_hint)
+    emit_event(job_id, "phase", {"phase": "phase1", "status": "done",
+                                 "title": "Phase 1 — Solver",
+                                 "detail": f"{solution.topic} ({len(solution.steps)} steps)",
+                                 "preview": solution.conclusion[:300]})
+
+    # Phase 2
+    emit_event(job_id, "phase", {"phase": "phase2", "status": "running",
+                                 "title": "Phase 2 — Director", "detail": "Planning scenes..."})
+    storyboard = await direct(solution, target_seconds=target_seconds, style=style)
+    emit_event(job_id, "phase", {"phase": "phase2", "status": "done",
+                                 "title": "Phase 2 — Director",
+                                 "detail": f"{len(storyboard.scenes)} scenes / {storyboard.total_target_seconds}s",
+                                 "scenes": len(storyboard.scenes)})
+
+    # Phase 3
+    emit_event(job_id, "phase", {"phase": "phase3", "status": "running",
+                                 "title": "Phase 3 — Narrator + TTS", "detail": "Synthesizing voiceover..."})
+    scene_audios = await orchestrator._phase3_fanout(storyboard, audio_dir)
+    emit_event(job_id, "phase", {"phase": "phase3", "status": "done",
+                                 "title": "Phase 3 — Narrator + TTS",
+                                 "detail": f"{len(scene_audios)} MP3s, {sum(a.duration_s for a in scene_audios):.1f}s total"})
+
+    # Phase 4
+    emit_event(job_id, "phase", {"phase": "phase4", "status": "running",
+                                 "title": "Phase 4 — Animator", "detail": "Generating Manim code (AST-gated)..."})
+    scene_codes = await orchestrator._phase4_fanout(storyboard, scene_audios, style, scenes_dir)
+    emit_event(job_id, "phase", {"phase": "phase4", "status": "done",
+                                 "title": "Phase 4 — Animator",
+                                 "detail": f"{len(scene_codes)} scene .py files validated"})
+
+    # Phase 5
+    emit_event(job_id, "phase", {"phase": "phase5", "status": "running",
+                                 "title": "Phase 5 — Render + Healer", "detail": "Rendering scenes (max 2 in parallel)..."})
+    scene_videos = await orchestrator._phase5_fanout(scene_codes, scene_audios, style, video_dir)
+    healer_used = sum(1 for v in scene_videos if v.used_healer)
+    emit_event(job_id, "phase", {"phase": "phase5", "status": "done",
+                                 "title": "Phase 5 — Render + Healer",
+                                 "detail": f"{len(scene_videos)} MP4s rendered (healer used on {healer_used})"})
+
+    # Phase 6
+    emit_event(job_id, "phase", {"phase": "phase6", "status": "running",
+                                 "title": "Phase 6 — Assembler", "detail": "Normalize + concat..."})
+    final = await assemble(
+        scene_videos=scene_videos,
+        scene_audios=scene_audios,
+        final_dir=final_dir,
+    )
+    emit_event(job_id, "phase", {"phase": "phase6", "status": "done",
+                                 "title": "Phase 6 — Assembler",
+                                 "detail": f"{final.total_duration_s:.2f}s (drift {final.total_drift_ms:+d}ms)"})
+
+    return final
+
+
+def run_pipeline_job_v2(job_id: str, query: str, image_path: str | None = None,
+                        target_seconds: int = 60):
+    """Background thread runner for AEVE 2.0 jobs."""
+    from models.llm_client import logger as pipeline_logger
+
+    sse_handler = patched_logger_emit(job_id)
+    sse_handler.setLevel("INFO")
+    from logging import Formatter
+    sse_handler.setFormatter(Formatter("%(message)s"))
+    pipeline_logger.addHandler(sse_handler)
+
+    try:
+        final = asyncio.run(
+            _run_aeve2_with_events(
+                job_id, query, image_path=image_path, target_seconds=target_seconds
+            )
+        )
+        emit_event(job_id, "complete", {
+            "video_path": f"/output/{os.path.basename(str(final.mp4_path))}",
+            "absolute_path": str(final.mp4_path),
+            "duration_s": final.total_duration_s,
+            "drift_ms": final.total_drift_ms,
+        })
+    except Exception as e:
+        emit_event(job_id, "error", {"message": str(e), "type": type(e).__name__})
+    finally:
+        pipeline_logger.removeHandler(sse_handler)
+        emit_event(job_id, "end", {})
+
+
+# ---------------------------------------------------------------------------
+# Legacy AEVE 1.0 worker — preserved for backward compat (mode=legacy).
+# ---------------------------------------------------------------------------
+
+
 def run_pipeline_job(job_id: str, query: str, image_path: str = None, quality: str = "low"):
-    """Run the AEVE pipeline in a background thread, pushing events to SSE."""
+    """Run the AEVE 1.0 pipeline in a background thread, pushing events to SSE."""
     from models.llm_client import logger as pipeline_logger
 
     # Add SSE handler to pipeline logger
@@ -128,12 +269,20 @@ def index():
 
 @app.route("/start", methods=["POST"])
 def start_pipeline():
-    """Start a new pipeline job."""
+    """Start a new pipeline job.
+
+    Form fields:
+        query           — the math topic
+        image           — optional image upload
+        mode            — "v2" (default, AEVE 2.0) or "legacy" (AEVE 1.0)
+        target_seconds  — total runtime target for AEVE 2.0 (default 60)
+        quality         — Manim quality flag for AEVE 1.0 (default "low")
+    """
     job_id = str(uuid.uuid4())[:8]
     event_queues[job_id] = queue.Queue()
 
     query = request.form.get("query", "")
-    quality = request.form.get("quality", "low")
+    mode = (request.form.get("mode") or "v2").lower()
     image_path = None
 
     # Handle image upload
@@ -149,15 +298,27 @@ def start_pipeline():
     if not query:
         return jsonify({"error": "Please provide a query or upload an image"}), 400
 
-    # Start pipeline in background thread
-    thread = threading.Thread(
-        target=run_pipeline_job,
-        args=(job_id, query, image_path, quality),
-        daemon=True,
-    )
+    if mode == "legacy":
+        quality = request.form.get("quality", "low")
+        thread = threading.Thread(
+            target=run_pipeline_job,
+            args=(job_id, query, image_path, quality),
+            daemon=True,
+        )
+    else:
+        try:
+            target_seconds = int(request.form.get("target_seconds", "60"))
+        except ValueError:
+            target_seconds = 60
+        target_seconds = max(20, min(180, target_seconds))
+        thread = threading.Thread(
+            target=run_pipeline_job_v2,
+            args=(job_id, query, image_path, target_seconds),
+            daemon=True,
+        )
     thread.start()
 
-    return jsonify({"job_id": job_id})
+    return jsonify({"job_id": job_id, "mode": mode})
 
 
 @app.route("/events/<job_id>")
@@ -190,10 +351,12 @@ def events(job_id):
 
 @app.route("/output/<path:filename>")
 def serve_output(filename):
-    """Serve output files (videos, audio, etc.)."""
+    """Serve output files. Both legacy (`final_video.mp4`) and AEVE 2.0
+    (`final.mp4`) live in `config.FINAL_DIR`."""
     return send_from_directory(config.FINAL_DIR, filename)
 
 
 if __name__ == "__main__":
-    print("\n🌐 AEVE Web Interface starting at http://localhost:5000\n")
+    print("\nAEVE Web Interface starting at http://localhost:5000")
+    print("Default mode: AEVE 2.0. Pass mode=legacy in form data to use AEVE 1.0.\n")
     app.run(debug=False, port=5000, threaded=True)

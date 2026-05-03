@@ -6888,3 +6888,346 @@ class Scene005(Scene):
 2026-03-01 01:53:34,262 │ INFO    │   FINAL VIDEO READY: D:\Documents\norse\web Applicarion\Autonomous Educational Video Engine\output\final\final_video.mp4
 2026-03-01 01:53:34,264 │ INFO    │   Total scenes: 5/5
 2026-03-01 01:53:34,264 │ INFO    │ ============================================================
+2026-05-03 11:36:36,328 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:36:36,329 │ INFO    │ [assembler] scene 002 normalized -> norm_002.mp4
+2026-05-03 11:36:36,330 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-8\test_assemble_happy_path0\final\final.mp4
+2026-05-03 11:36:36,330 │ INFO    │ [assembler] final duration=9.000s target=9.000s drift=0ms (budget=50ms)
+2026-05-03 11:36:36,337 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:36:36,338 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-8\test_assemble_logs_drift_above0\final\final.mp4
+2026-05-03 11:36:36,339 │ INFO    │ [assembler] final duration=5.500s target=5.000s drift=500ms (budget=50ms)
+2026-05-03 11:36:36,339 │ ERROR   │ [assembler] drift 500ms exceeds budget 50ms
+2026-05-03 11:36:36,355 │ INFO    │ [healer] wrote deterministic fallback for scene 005 -> scene_005.py (formulas=2, target=8.000s)
+2026-05-03 11:36:36,665 │ INFO    │ [healer] wrote deterministic fallback for scene 001 -> scene_001.py (formulas=0, target=5.000s)
+2026-05-03 11:36:36,678 │ INFO    │ [healer] wrote deterministic fallback for scene 002 -> scene_002.py (formulas=1, target=6.000s)
+2026-05-03 11:36:36,692 │ INFO    │ [healer] scene 001 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:36:36,717 │ INFO    │ [healer] scene 003 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:36:36,741 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:36:36,742 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:36:36,743 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:36:36,750 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:36:36,750 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: ImportError: bad module
+2026-05-03 11:36:36,760 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:36:36,761 │ INFO    │ [render] scene 001 — recovered on attempt 2
+2026-05-03 11:36:36,762 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:36:36,762 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:36:36,777 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:36:36,778 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:36:36,781 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:36:36,781 │ WARNING │ [render] scene 001 — attempt 2 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:36:36,793 │ INFO    │ [render] scene 001 — attempt 3/4 (scene_001.py)
+2026-05-03 11:36:36,793 │ WARNING │ [render] scene 001 — attempt 3 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:36:36,796 │ INFO    │ [render] scene 001 — attempt 4/4 (scene_001.py)
+2026-05-03 11:36:36,796 │ WARNING │ [render] scene 001 — attempt 4 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:36:36,797 │ WARNING │ [render] scene 001 — healer exhausted; writing fallback scene
+2026-05-03 11:36:36,799 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:36:36,800 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:38:30,910 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,912 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:38:30,917 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,918 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: predicted runtime 0.400s is outside the acceptable band [4.600s, 5.250s] for target 5.000s. Adjust `run_time=` literals so the sum lands in-band. Spread reveals across the full duration; do NOT pad with self.wait(N) at the end.
+2026-05-03 11:38:30,919 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,920 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:38:30,924 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,924 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:38:30,925 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,925 │ WARNING │ [animator] scene 001 — attempt 2 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:38:30,929 │ INFO    │ [animator] scene 002 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:38:30,931 │ INFO    │ [animator] scene 002 — wrote scene_002.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:38:30,991 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:38:30,991 │ INFO    │ [assembler] scene 002 normalized -> norm_002.mp4
+2026-05-03 11:38:30,993 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-13\test_assemble_happy_path0\final\final.mp4
+2026-05-03 11:38:30,993 │ INFO    │ [assembler] final duration=9.000s target=9.000s drift=0ms (budget=50ms)
+2026-05-03 11:38:30,998 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:38:30,999 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-13\test_assemble_logs_drift_above0\final\final.mp4
+2026-05-03 11:38:30,999 │ INFO    │ [assembler] final duration=5.500s target=5.000s drift=500ms (budget=50ms)
+2026-05-03 11:38:30,999 │ ERROR   │ [assembler] drift 500ms exceeds budget 50ms
+2026-05-03 11:38:31,027 │ WARNING │ [carryover] scene_004.carry.json is malformed (1 validation error for SceneCarry
+  Invalid JSON: key must be a string at line 1 column 2 [type=json_invalid, input_value='{not json', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.7/v/json_invalid); treating as empty
+2026-05-03 11:38:31,047 │ INFO    │ [healer] wrote deterministic fallback for scene 005 -> scene_005.py (formulas=2, target=8.000s)
+2026-05-03 11:38:31,052 │ INFO    │ [healer] wrote deterministic fallback for scene 001 -> scene_001.py (formulas=0, target=5.000s)
+2026-05-03 11:38:31,057 │ INFO    │ [healer] wrote deterministic fallback for scene 002 -> scene_002.py (formulas=1, target=6.000s)
+2026-05-03 11:38:31,060 │ INFO    │ [healer] scene 001 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:38:31,100 │ INFO    │ [healer] scene 003 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:38:31,111 │ INFO    │ [orchestrator] phase 0 — building StyleManifest
+2026-05-03 11:38:31,114 │ INFO    │ [orchestrator] phase 1 — solver
+2026-05-03 11:38:31,114 │ INFO    │ [orchestrator] phase 2 — director
+2026-05-03 11:38:31,114 │ INFO    │ [orchestrator] phase 3 — fan out narrator+tts across 2 scenes
+2026-05-03 11:38:31,116 │ INFO    │ [orchestrator] scene 001 ready — 5.500s, 3 words, timeline=scene_001.timeline.json
+2026-05-03 11:38:31,117 │ INFO    │ [orchestrator] scene 002 ready — 6.000s, 3 words, timeline=scene_002.timeline.json
+2026-05-03 11:38:31,117 │ INFO    │ [orchestrator] phase 4 — fan out animator across 2 scenes
+2026-05-03 11:38:31,119 │ INFO    │ [orchestrator] phase 5 — render+heal across 2 scenes
+2026-05-03 11:38:31,119 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:38:31,122 │ INFO    │ [render] scene 002 — attempt 1/4 (scene_002.py)
+2026-05-03 11:38:33,421 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=0). stderr tail: C:\Users\shanm\anaconda3\envs\cv_conda\lib\runpy.py:126: RuntimeWarning: 'manim.__main__' found in sys.modules after import of package 'manim', but prior to execution of 'manim.__main__'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+2026-05-03 11:38:33,609 │ WARNING │ [render] scene 002 — attempt 1 failed (rc=0). stderr tail: C:\Users\shanm\anaconda3\envs\cv_conda\lib\runpy.py:126: RuntimeWarning: 'manim.__main__' found in sys.modules after import of package 'manim', but prior to execution of 'manim.__main__'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+2026-05-03 11:38:34,485 │ WARNING │ [healer] attempt 1/3 failed (openrouter/deepseek/deepseek-r1): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=deepseek/deepseek-r1]
+2026-05-03 11:38:34,485 │ INFO    │ OpenRouter slug nvidia/nemotron-3-coder → nvidia/nemotron-nano-9b-v2:free (closest match)
+2026-05-03 11:38:34,487 │ WARNING │ [healer] attempt 1/3 failed (openrouter/deepseek/deepseek-r1): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=deepseek/deepseek-r1]
+2026-05-03 11:38:34,488 │ INFO    │ OpenRouter slug nvidia/nemotron-3-coder → nvidia/nemotron-nano-9b-v2:free (closest match)
+2026-05-03 11:38:34,522 │ WARNING │ [healer] attempt 2/3 failed (openrouter/nvidia/nemotron-3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=nvidia/nemotron-nano-9b-v2:free]
+2026-05-03 11:38:34,524 │ WARNING │ [healer] attempt 2/3 failed (openrouter/nvidia/nemotron-3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=nvidia/nemotron-nano-9b-v2:free]
+2026-05-03 11:38:34,559 │ WARNING │ [healer] attempt 3/3 failed (openrouter/qwen/qwen3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=qwen/qwen3-coder]
+2026-05-03 11:38:34,993 │ INFO    │ [orchestrator] scene 001 ready — 1.000s, 0 words, timeline=scene_001.timeline.json
+2026-05-03 11:38:34,995 │ INFO    │ [orchestrator] scene 002 ready — 1.000s, 0 words, timeline=scene_002.timeline.json
+2026-05-03 11:38:34,997 │ INFO    │ [orchestrator] scene 003 ready — 1.000s, 0 words, timeline=scene_003.timeline.json
+2026-05-03 11:38:34,998 │ INFO    │ [orchestrator] scene 004 ready — 1.000s, 0 words, timeline=scene_004.timeline.json
+2026-05-03 11:38:35,016 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:38:35,017 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:38:35,017 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:38:35,022 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:38:35,022 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: ImportError: bad module
+2026-05-03 11:38:35,024 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:38:35,025 │ INFO    │ [render] scene 001 — recovered on attempt 2
+2026-05-03 11:38:35,025 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:38:35,026 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:38:35,033 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:38:35,034 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:38:35,035 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:38:35,036 │ WARNING │ [render] scene 001 — attempt 2 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:38:35,037 │ INFO    │ [render] scene 001 — attempt 3/4 (scene_001.py)
+2026-05-03 11:38:35,037 │ WARNING │ [render] scene 001 — attempt 3 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:38:35,039 │ INFO    │ [render] scene 001 — attempt 4/4 (scene_001.py)
+2026-05-03 11:38:35,039 │ WARNING │ [render] scene 001 — attempt 4 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:38:35,040 │ WARNING │ [render] scene 001 — healer exhausted; writing fallback scene
+2026-05-03 11:38:35,041 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:38:35,042 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:38:35,044 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=1, TextMobject=0, TexMobject=0)
+2026-05-03 11:38:35,045 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=1, TexMobject=0)
+2026-05-03 11:38:35,046 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=0, TexMobject=1)
+2026-05-03 11:38:35,047 │ INFO    │ [sanitize] applied 1 safe transforms (poly=1, ShowCreation=0, TextMobject=0, TexMobject=0)
+2026-05-03 11:38:35,049 │ INFO    │ [sanitize] applied 2 safe transforms (poly=0, ShowCreation=1, TextMobject=1, TexMobject=0)
+2026-05-03 11:38:35,050 │ INFO    │ [sanitize] applied 5 safe transforms (poly=1, ShowCreation=2, TextMobject=1, TexMobject=1)
+2026-05-03 11:38:50,270 │ INFO    │ [orchestrator] phase 0 — building StyleManifest
+2026-05-03 11:38:50,271 │ INFO    │ [orchestrator] phase 1 — solver
+2026-05-03 11:38:50,272 │ INFO    │ [orchestrator] phase 2 — director
+2026-05-03 11:38:50,272 │ INFO    │ [orchestrator] phase 3 — fan out narrator+tts across 2 scenes
+2026-05-03 11:38:50,273 │ INFO    │ [orchestrator] scene 001 ready — 5.500s, 3 words, timeline=scene_001.timeline.json
+2026-05-03 11:38:50,274 │ INFO    │ [orchestrator] scene 002 ready — 6.000s, 3 words, timeline=scene_002.timeline.json
+2026-05-03 11:38:50,274 │ INFO    │ [orchestrator] phase 4 — fan out animator across 2 scenes
+2026-05-03 11:38:50,277 │ INFO    │ [orchestrator] phase 5 — render+heal across 2 scenes
+2026-05-03 11:38:50,310 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:38:50,315 │ INFO    │ [render] scene 002 — attempt 1/4 (scene_002.py)
+2026-05-03 11:38:52,440 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=0). stderr tail: C:\Users\shanm\anaconda3\envs\cv_conda\lib\runpy.py:126: RuntimeWarning: 'manim.__main__' found in sys.modules after import of package 'manim', but prior to execution of 'manim.__main__'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+2026-05-03 11:38:52,657 │ WARNING │ [render] scene 002 — attempt 1 failed (rc=0). stderr tail: C:\Users\shanm\anaconda3\envs\cv_conda\lib\runpy.py:126: RuntimeWarning: 'manim.__main__' found in sys.modules after import of package 'manim', but prior to execution of 'manim.__main__'; this may result in unpredictable behaviour
+  warn(RuntimeWarning(msg))
+2026-05-03 11:38:53,341 │ WARNING │ [healer] attempt 1/3 failed (openrouter/deepseek/deepseek-r1): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=deepseek/deepseek-r1]
+2026-05-03 11:38:53,342 │ INFO    │ OpenRouter slug nvidia/nemotron-3-coder → nvidia/nemotron-nano-9b-v2:free (closest match)
+2026-05-03 11:38:53,344 │ WARNING │ [healer] attempt 1/3 failed (openrouter/deepseek/deepseek-r1): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=deepseek/deepseek-r1]
+2026-05-03 11:38:53,344 │ INFO    │ OpenRouter slug nvidia/nemotron-3-coder → nvidia/nemotron-nano-9b-v2:free (closest match)
+2026-05-03 11:38:53,364 │ WARNING │ [healer] attempt 2/3 failed (openrouter/nvidia/nemotron-3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=nvidia/nemotron-nano-9b-v2:free]
+2026-05-03 11:38:53,368 │ WARNING │ [healer] attempt 2/3 failed (openrouter/nvidia/nemotron-3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=nvidia/nemotron-nano-9b-v2:free]
+2026-05-03 11:38:53,388 │ WARNING │ [healer] attempt 3/3 failed (openrouter/qwen/qwen3-coder): OpenRouter client error 401: {"error":{"message":"User not found.","code":401}} [role=healer provider=openrouter model=qwen/qwen3-coder]
+2026-05-03 11:39:50,424 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,425 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:39:50,430 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,431 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: predicted runtime 0.400s is outside the acceptable band [4.600s, 5.250s] for target 5.000s. Adjust `run_time=` literals so the sum lands in-band. Spread reveals across the full duration; do NOT pad with self.wait(N) at the end.
+2026-05-03 11:39:50,431 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,432 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:39:50,436 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,436 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:39:50,437 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,437 │ WARNING │ [animator] scene 001 — attempt 2 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:39:50,441 │ INFO    │ [animator] scene 002 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:39:50,442 │ INFO    │ [animator] scene 002 — wrote scene_002.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:39:50,500 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:39:50,501 │ INFO    │ [assembler] scene 002 normalized -> norm_002.mp4
+2026-05-03 11:39:50,502 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-15\test_assemble_happy_path0\final\final.mp4
+2026-05-03 11:39:50,502 │ INFO    │ [assembler] final duration=9.000s target=9.000s drift=0ms (budget=50ms)
+2026-05-03 11:39:50,507 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:39:50,511 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-15\test_assemble_logs_drift_above0\final\final.mp4
+2026-05-03 11:39:50,511 │ INFO    │ [assembler] final duration=5.500s target=5.000s drift=500ms (budget=50ms)
+2026-05-03 11:39:50,511 │ ERROR   │ [assembler] drift 500ms exceeds budget 50ms
+2026-05-03 11:39:50,529 │ WARNING │ [carryover] scene_004.carry.json is malformed (1 validation error for SceneCarry
+  Invalid JSON: key must be a string at line 1 column 2 [type=json_invalid, input_value='{not json', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.7/v/json_invalid); treating as empty
+2026-05-03 11:39:50,547 │ INFO    │ [healer] wrote deterministic fallback for scene 005 -> scene_005.py (formulas=2, target=8.000s)
+2026-05-03 11:39:50,553 │ INFO    │ [healer] wrote deterministic fallback for scene 001 -> scene_001.py (formulas=0, target=5.000s)
+2026-05-03 11:39:50,559 │ INFO    │ [healer] wrote deterministic fallback for scene 002 -> scene_002.py (formulas=1, target=6.000s)
+2026-05-03 11:39:50,562 │ INFO    │ [healer] scene 001 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:39:50,594 │ INFO    │ [healer] scene 003 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:39:50,604 │ INFO    │ [orchestrator] phase 0 — building StyleManifest
+2026-05-03 11:39:50,606 │ INFO    │ [orchestrator] phase 1 — solver
+2026-05-03 11:39:50,606 │ INFO    │ [orchestrator] phase 2 — director
+2026-05-03 11:39:50,606 │ INFO    │ [orchestrator] phase 3 — fan out narrator+tts across 2 scenes
+2026-05-03 11:39:50,608 │ INFO    │ [orchestrator] scene 001 ready — 5.500s, 3 words, timeline=scene_001.timeline.json
+2026-05-03 11:39:50,610 │ INFO    │ [orchestrator] scene 002 ready — 6.000s, 3 words, timeline=scene_002.timeline.json
+2026-05-03 11:39:50,610 │ INFO    │ [orchestrator] phase 4 — fan out animator across 2 scenes
+2026-05-03 11:39:50,612 │ INFO    │ [orchestrator] phase 5 — render+heal across 2 scenes
+2026-05-03 11:39:50,613 │ INFO    │ [orchestrator] phase 6 — assemble final video
+2026-05-03 11:39:50,615 │ INFO    │ [orchestrator] phases 0-6 complete: 2 scenes, audio=11.50s, final=11.50s (drift=0ms) -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-15\test_run_pipeline_fanout0\final\final.mp4
+2026-05-03 11:39:50,751 │ INFO    │ [orchestrator] scene 001 ready — 1.000s, 0 words, timeline=scene_001.timeline.json
+2026-05-03 11:39:50,754 │ INFO    │ [orchestrator] scene 002 ready — 1.000s, 0 words, timeline=scene_002.timeline.json
+2026-05-03 11:39:50,755 │ INFO    │ [orchestrator] scene 003 ready — 1.000s, 0 words, timeline=scene_003.timeline.json
+2026-05-03 11:39:50,755 │ INFO    │ [orchestrator] scene 004 ready — 1.000s, 0 words, timeline=scene_004.timeline.json
+2026-05-03 11:39:50,779 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:39:50,781 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:39:50,781 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:39:50,787 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:39:50,788 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: ImportError: bad module
+2026-05-03 11:39:50,789 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:39:50,790 │ INFO    │ [render] scene 001 — recovered on attempt 2
+2026-05-03 11:39:50,790 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:39:50,791 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:39:50,798 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:39:50,798 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:39:50,800 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:39:50,800 │ WARNING │ [render] scene 001 — attempt 2 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:39:50,802 │ INFO    │ [render] scene 001 — attempt 3/4 (scene_001.py)
+2026-05-03 11:39:50,802 │ WARNING │ [render] scene 001 — attempt 3 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:39:50,804 │ INFO    │ [render] scene 001 — attempt 4/4 (scene_001.py)
+2026-05-03 11:39:50,804 │ WARNING │ [render] scene 001 — attempt 4 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:39:50,805 │ WARNING │ [render] scene 001 — healer exhausted; writing fallback scene
+2026-05-03 11:39:50,807 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:39:50,807 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:39:50,809 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=1, TextMobject=0, TexMobject=0)
+2026-05-03 11:39:50,810 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=1, TexMobject=0)
+2026-05-03 11:39:50,811 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=0, TexMobject=1)
+2026-05-03 11:39:50,811 │ INFO    │ [sanitize] applied 1 safe transforms (poly=1, ShowCreation=0, TextMobject=0, TexMobject=0)
+2026-05-03 11:39:50,814 │ INFO    │ [sanitize] applied 2 safe transforms (poly=0, ShowCreation=1, TextMobject=1, TexMobject=0)
+2026-05-03 11:39:50,815 │ INFO    │ [sanitize] applied 5 safe transforms (poly=1, ShowCreation=2, TextMobject=1, TexMobject=1)
+2026-05-03 11:45:15,947 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,949 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:45:15,954 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,955 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: predicted runtime 0.400s is outside the acceptable band [4.600s, 5.250s] for target 5.000s. Adjust `run_time=` literals so the sum lands in-band. Spread reveals across the full duration; do NOT pad with self.wait(N) at the end.
+2026-05-03 11:45:15,955 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,956 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:45:15,961 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,962 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:45:15,962 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,962 │ WARNING │ [animator] scene 001 — attempt 2 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 11:45:15,967 │ INFO    │ [animator] scene 002 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 11:45:15,968 │ INFO    │ [animator] scene 002 — wrote scene_002.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 11:45:16,030 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:45:16,031 │ INFO    │ [assembler] scene 002 normalized -> norm_002.mp4
+2026-05-03 11:45:16,032 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-16\test_assemble_happy_path0\final\final.mp4
+2026-05-03 11:45:16,032 │ INFO    │ [assembler] final duration=9.000s target=9.000s drift=0ms (budget=50ms)
+2026-05-03 11:45:16,042 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 11:45:16,043 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-16\test_assemble_logs_drift_above0\final\final.mp4
+2026-05-03 11:45:16,044 │ INFO    │ [assembler] final duration=5.500s target=5.000s drift=500ms (budget=50ms)
+2026-05-03 11:45:16,044 │ ERROR   │ [assembler] drift 500ms exceeds budget 50ms
+2026-05-03 11:45:16,060 │ WARNING │ [carryover] scene_004.carry.json is malformed (1 validation error for SceneCarry
+  Invalid JSON: key must be a string at line 1 column 2 [type=json_invalid, input_value='{not json', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.7/v/json_invalid); treating as empty
+2026-05-03 11:45:16,078 │ INFO    │ [healer] wrote deterministic fallback for scene 005 -> scene_005.py (formulas=2, target=8.000s)
+2026-05-03 11:45:16,083 │ INFO    │ [healer] wrote deterministic fallback for scene 001 -> scene_001.py (formulas=0, target=5.000s)
+2026-05-03 11:45:16,088 │ INFO    │ [healer] wrote deterministic fallback for scene 002 -> scene_002.py (formulas=1, target=6.000s)
+2026-05-03 11:45:16,091 │ INFO    │ [healer] scene 001 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:45:16,095 │ INFO    │ [healer] scene 003 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 11:45:16,106 │ INFO    │ [orchestrator] phase 0 — building StyleManifest
+2026-05-03 11:45:16,107 │ INFO    │ [orchestrator] phase 1 — solver
+2026-05-03 11:45:16,107 │ INFO    │ [orchestrator] phase 2 — director
+2026-05-03 11:45:16,108 │ INFO    │ [orchestrator] phase 3 — fan out narrator+tts across 2 scenes
+2026-05-03 11:45:16,109 │ INFO    │ [orchestrator] scene 001 ready — 5.500s, 3 words, timeline=scene_001.timeline.json
+2026-05-03 11:45:16,110 │ INFO    │ [orchestrator] scene 002 ready — 6.000s, 3 words, timeline=scene_002.timeline.json
+2026-05-03 11:45:16,111 │ INFO    │ [orchestrator] phase 4 — fan out animator across 2 scenes
+2026-05-03 11:45:16,113 │ INFO    │ [orchestrator] phase 5 — render+heal across 2 scenes
+2026-05-03 11:45:16,114 │ INFO    │ [orchestrator] phase 6 — assemble final video
+2026-05-03 11:45:16,115 │ INFO    │ [orchestrator] phases 0-6 complete: 2 scenes, audio=11.50s, final=11.50s (drift=0ms) -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-16\test_run_pipeline_fanout0\final\final.mp4
+2026-05-03 11:45:16,236 │ INFO    │ [orchestrator] scene 001 ready — 1.000s, 0 words, timeline=scene_001.timeline.json
+2026-05-03 11:45:16,237 │ INFO    │ [orchestrator] scene 002 ready — 1.000s, 0 words, timeline=scene_002.timeline.json
+2026-05-03 11:45:16,237 │ INFO    │ [orchestrator] scene 003 ready — 1.000s, 0 words, timeline=scene_003.timeline.json
+2026-05-03 11:45:16,238 │ INFO    │ [orchestrator] scene 004 ready — 1.000s, 0 words, timeline=scene_004.timeline.json
+2026-05-03 11:45:16,257 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:45:16,259 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:45:16,260 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:45:16,265 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:45:16,265 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: ImportError: bad module
+2026-05-03 11:45:16,267 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:45:16,268 │ INFO    │ [render] scene 001 — recovered on attempt 2
+2026-05-03 11:45:16,268 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:45:16,269 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:45:16,275 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 11:45:16,275 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:45:16,277 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 11:45:16,277 │ WARNING │ [render] scene 001 — attempt 2 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:45:16,278 │ INFO    │ [render] scene 001 — attempt 3/4 (scene_001.py)
+2026-05-03 11:45:16,278 │ WARNING │ [render] scene 001 — attempt 3 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:45:16,280 │ INFO    │ [render] scene 001 — attempt 4/4 (scene_001.py)
+2026-05-03 11:45:16,280 │ WARNING │ [render] scene 001 — attempt 4 failed (rc=1). stderr tail: generic boom
+2026-05-03 11:45:16,281 │ WARNING │ [render] scene 001 — healer exhausted; writing fallback scene
+2026-05-03 11:45:16,283 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 11:45:16,284 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 11:45:16,286 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=1, TextMobject=0, TexMobject=0)
+2026-05-03 11:45:16,287 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=1, TexMobject=0)
+2026-05-03 11:45:16,289 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=0, TexMobject=1)
+2026-05-03 11:45:16,290 │ INFO    │ [sanitize] applied 1 safe transforms (poly=1, ShowCreation=0, TextMobject=0, TexMobject=0)
+2026-05-03 11:45:16,292 │ INFO    │ [sanitize] applied 2 safe transforms (poly=0, ShowCreation=1, TextMobject=1, TexMobject=0)
+2026-05-03 11:45:16,293 │ INFO    │ [sanitize] applied 5 safe transforms (poly=1, ShowCreation=2, TextMobject=1, TexMobject=1)
+2026-05-03 12:02:31,142 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,144 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 12:02:31,149 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,149 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: predicted runtime 0.400s is outside the acceptable band [4.600s, 5.250s] for target 5.000s. Adjust `run_time=` literals so the sum lands in-band. Spread reveals across the full duration; do NOT pad with self.wait(N) at the end.
+2026-05-03 12:02:31,150 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,151 │ INFO    │ [animator] scene 001 — wrote scene_001.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 12:02:31,156 │ INFO    │ [animator] scene 001 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,156 │ WARNING │ [animator] scene 001 — attempt 1 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 12:02:31,157 │ INFO    │ [animator] scene 001 — attempt 2 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,157 │ WARNING │ [animator] scene 001 — attempt 2 gate failed: syntax error at line 1: '(' was never closed
+2026-05-03 12:02:31,163 │ INFO    │ [animator] scene 002 — attempt 1 (target=5.000s, layout=title_only)
+2026-05-03 12:02:31,165 │ INFO    │ [animator] scene 002 — wrote scene_002.py (predicted=5.000s, target=5.000s, sanitize=0 transforms)
+2026-05-03 12:02:31,228 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 12:02:31,229 │ INFO    │ [assembler] scene 002 normalized -> norm_002.mp4
+2026-05-03 12:02:31,230 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-19\test_assemble_happy_path0\final\final.mp4
+2026-05-03 12:02:31,231 │ INFO    │ [assembler] final duration=9.000s target=9.000s drift=0ms (budget=50ms)
+2026-05-03 12:02:31,238 │ INFO    │ [assembler] scene 001 normalized -> norm_001.mp4
+2026-05-03 12:02:31,239 │ INFO    │ [assembler] concat -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-19\test_assemble_logs_drift_above0\final\final.mp4
+2026-05-03 12:02:31,240 │ INFO    │ [assembler] final duration=5.500s target=5.000s drift=500ms (budget=50ms)
+2026-05-03 12:02:31,240 │ ERROR   │ [assembler] drift 500ms exceeds budget 50ms
+2026-05-03 12:02:31,260 │ WARNING │ [carryover] scene_004.carry.json is malformed (1 validation error for SceneCarry
+  Invalid JSON: key must be a string at line 1 column 2 [type=json_invalid, input_value='{not json', input_type=str]
+    For further information visit https://errors.pydantic.dev/2.7/v/json_invalid); treating as empty
+2026-05-03 12:02:31,284 │ INFO    │ [healer] wrote deterministic fallback for scene 005 -> scene_005.py (formulas=2, target=8.000s)
+2026-05-03 12:02:31,294 │ INFO    │ [healer] wrote deterministic fallback for scene 001 -> scene_001.py (formulas=0, target=5.000s)
+2026-05-03 12:02:31,300 │ INFO    │ [healer] wrote deterministic fallback for scene 002 -> scene_002.py (formulas=1, target=6.000s)
+2026-05-03 12:02:31,305 │ INFO    │ [healer] scene 001 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 12:02:31,312 │ INFO    │ [healer] scene 003 — accepted (predicted=5.000s, sanitize=0)
+2026-05-03 12:02:31,329 │ INFO    │ [orchestrator] phase 0 — building StyleManifest
+2026-05-03 12:02:31,330 │ INFO    │ [orchestrator] phase 1 — solver
+2026-05-03 12:02:31,330 │ INFO    │ [orchestrator] phase 2 — director
+2026-05-03 12:02:31,331 │ INFO    │ [orchestrator] phase 3 — fan out narrator+tts across 2 scenes
+2026-05-03 12:02:31,332 │ INFO    │ [orchestrator] scene 001 ready — 5.500s, 3 words, timeline=scene_001.timeline.json
+2026-05-03 12:02:31,334 │ INFO    │ [orchestrator] scene 002 ready — 6.000s, 3 words, timeline=scene_002.timeline.json
+2026-05-03 12:02:31,334 │ INFO    │ [orchestrator] phase 4 — fan out animator across 2 scenes
+2026-05-03 12:02:31,336 │ INFO    │ [orchestrator] phase 5 — render+heal across 2 scenes
+2026-05-03 12:02:31,337 │ INFO    │ [orchestrator] phase 6 — assemble final video
+2026-05-03 12:02:31,338 │ INFO    │ [orchestrator] phases 0-6 complete: 2 scenes, audio=11.50s, final=11.50s (drift=0ms) -> C:\Users\shanm\AppData\Local\Temp\pytest-of-shanm\pytest-19\test_run_pipeline_fanout0\final\final.mp4
+2026-05-03 12:02:31,468 │ INFO    │ [orchestrator] scene 001 ready — 1.000s, 0 words, timeline=scene_001.timeline.json
+2026-05-03 12:02:31,471 │ INFO    │ [orchestrator] scene 002 ready — 1.000s, 0 words, timeline=scene_002.timeline.json
+2026-05-03 12:02:31,471 │ INFO    │ [orchestrator] scene 003 ready — 1.000s, 0 words, timeline=scene_003.timeline.json
+2026-05-03 12:02:31,472 │ INFO    │ [orchestrator] scene 004 ready — 1.000s, 0 words, timeline=scene_004.timeline.json
+2026-05-03 12:02:31,495 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 12:02:31,496 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 12:02:31,496 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 12:02:31,501 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 12:02:31,502 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: ImportError: bad module
+2026-05-03 12:02:31,503 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 12:02:31,504 │ INFO    │ [render] scene 001 — recovered on attempt 2
+2026-05-03 12:02:31,504 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 12:02:31,505 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 12:02:31,510 │ INFO    │ [render] scene 001 — attempt 1/4 (scene_001.py)
+2026-05-03 12:02:31,510 │ WARNING │ [render] scene 001 — attempt 1 failed (rc=1). stderr tail: generic boom
+2026-05-03 12:02:31,512 │ INFO    │ [render] scene 001 — attempt 2/4 (scene_001.py)
+2026-05-03 12:02:31,512 │ WARNING │ [render] scene 001 — attempt 2 failed (rc=1). stderr tail: generic boom
+2026-05-03 12:02:31,514 │ INFO    │ [render] scene 001 — attempt 3/4 (scene_001.py)
+2026-05-03 12:02:31,514 │ WARNING │ [render] scene 001 — attempt 3 failed (rc=1). stderr tail: generic boom
+2026-05-03 12:02:31,515 │ INFO    │ [render] scene 001 — attempt 4/4 (scene_001.py)
+2026-05-03 12:02:31,515 │ WARNING │ [render] scene 001 — attempt 4 failed (rc=1). stderr tail: generic boom
+2026-05-03 12:02:31,516 │ WARNING │ [render] scene 001 — healer exhausted; writing fallback scene
+2026-05-03 12:02:31,518 │ INFO    │ [render] scene 001 — drift correction: noop (delta=0.000s)
+2026-05-03 12:02:31,518 │ INFO    │ [render] scene 001 — final scene_001.mp4 (measured=5.000s target=5.000s drift=0ms)
+2026-05-03 12:02:31,522 │ INFO    │ [runtime] scene 001 — wrote scene_001.carry.json (1 carry objects)
+2026-05-03 12:02:31,525 │ INFO    │ [runtime] scene 002 — wrote scene_002.carry.json (2 carry objects)
+2026-05-03 12:02:31,529 │ INFO    │ [runtime] scene 003 — wrote scene_003.carry.json (1 carry objects)
+2026-05-03 12:02:31,532 │ INFO    │ [runtime] scene 004 — wrote scene_004.carry.json (0 carry objects)
+2026-05-03 12:02:31,537 │ INFO    │ [runtime] scene 005 — wrote scene_005.carry.json (0 carry objects)
+2026-05-03 12:02:31,540 │ INFO    │ [runtime] scene 006 — wrote scene_006.carry.json (1 carry objects)
+2026-05-03 12:02:31,542 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=1, TextMobject=0, TexMobject=0)
+2026-05-03 12:02:31,543 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=1, TexMobject=0)
+2026-05-03 12:02:31,544 │ INFO    │ [sanitize] applied 1 safe transforms (poly=0, ShowCreation=0, TextMobject=0, TexMobject=1)
+2026-05-03 12:02:31,545 │ INFO    │ [sanitize] applied 1 safe transforms (poly=1, ShowCreation=0, TextMobject=0, TexMobject=0)
+2026-05-03 12:02:31,547 │ INFO    │ [sanitize] applied 2 safe transforms (poly=0, ShowCreation=1, TextMobject=1, TexMobject=0)
+2026-05-03 12:02:31,549 │ INFO    │ [sanitize] applied 5 safe transforms (poly=1, ShowCreation=2, TextMobject=1, TexMobject=1)

@@ -1,131 +1,157 @@
 """
-AEVE — Autonomous Educational Video Engine
+AEVE — Autonomous Educational Video Engine — CLI entrypoint.
 
-Main CLI entrypoint. Runs the full pipeline:
-  Phase I:  Knowledge Distillation (M1 + M2)
-  Phase II: Consensus Committee (M3-M6)
-  Phase III: Distribution (Audio + Code streams)
-  Assembly: Render + Merge + Concatenate → Final Video
+By default this runs the AEVE 2.0 pipeline (5 agents, 6 phases, Pydantic-
+gated, 50 ms drift budget). Pass `--legacy` to fall back to the AEVE 1.0
+10-agent pipeline during the side-by-side period.
+
+Examples:
+    python main.py "Prove the Pythagorean theorem"
+    python main.py "Derive the quadratic formula" --target-seconds 90
+    python main.py --image problem.png "Explain this"
+    python main.py --legacy "Old-pipeline path" --quality high
 """
 
+from __future__ import annotations
+
 import argparse
+import asyncio
 import json
 import os
 import sys
 import time
 from datetime import datetime
+from pathlib import Path
 
-# Add project root to path
+# Add project root to path so the package layout works under both
+# `python main.py …` and `python -m main`.
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 import config
-from models.llm_client import logger, LLMError, OutputValidationError
+from models.llm_client import LLMError, OutputValidationError, logger
 
 
-def print_banner():
-    """Print the AEVE startup banner."""
+# ---------------------------------------------------------------------------
+# Banner + key check
+# ---------------------------------------------------------------------------
+
+
+def print_banner() -> None:
     banner = """
-╔══════════════════════════════════════════════════════════════╗
-║                                                              ║
-║     ██████╗ ███████╗██╗   ██╗███████╗                        ║
-║    ██╔═══██╗██╔════╝██║   ██║██╔════╝                        ║
-║    ███████║ █████╗  ██║   ██║█████╗                          ║
-║    ██╔══██║ ██╔══╝  ╚██╗ ██╔╝██╔══╝                          ║
-║    ██║  ██║ ███████╗ ╚████╔╝ ███████╗                        ║
-║    ╚═╝  ╚═╝ ╚══════╝  ╚═══╝  ╚══════╝                        ║
-║                                                              ║
-║    Autonomous Educational Video Engine                       ║
-║    ─────────────────────────────────                         ║
-║    Transform any math topic into an animated video           ║
-║                                                              ║
-╚══════════════════════════════════════════════════════════════╝
++--------------------------------------------------------------+
+|     AEVE 2.0 — Autonomous Educational Video Engine           |
+|     ----------------------------------------------           |
+|     Prompt -> Solver -> Director -> Narrator+TTS             |
+|              -> Animator -> Render+Healer -> Assembler       |
++--------------------------------------------------------------+
 """
     print(banner)
 
 
-def check_api_keys():
-    """Verify API keys are configured."""
+def check_api_keys() -> bool:
     issues = []
-    if config.GROQ_API_KEY == "YOUR_GROQ_API_KEY_HERE":
-        issues.append("GROQ_API_KEY not set (get it from console.groq.com)")
-    if config.OPENROUTER_API_KEY == "YOUR_OPENROUTER_API_KEY_HERE":
-        issues.append("OPENROUTER_API_KEY not set (get it from openrouter.ai/keys)")
-    if config.GOOGLE_API_KEY == "YOUR_GOOGLE_API_KEY_HERE":
-        issues.append("GOOGLE_API_KEY not set (get it from aistudio.google.com/apikey)")
-
+    if not config.GROQ_API_KEY or config.GROQ_API_KEY.startswith("YOUR_"):
+        issues.append("GROQ_API_KEY not set (console.groq.com)")
+    if not config.OPENROUTER_API_KEY or config.OPENROUTER_API_KEY.startswith("YOUR_"):
+        issues.append("OPENROUTER_API_KEY not set (openrouter.ai/keys)")
     if issues:
-        print("\n⚠ API KEY CONFIGURATION REQUIRED:")
-        print("─" * 40)
+        print("\nAPI KEY CONFIGURATION REQUIRED:")
+        print("-" * 40)
         for issue in issues:
-            print(f"  ✗ {issue}")
-        print()
-        print("Set them as environment variables or edit config.py directly.")
-        print("Example:")
-        print('  set GROQ_API_KEY=gsk_your_key_here')
-        print('  set OPENROUTER_API_KEY=sk-or-your_key_here')
-        print('  set GOOGLE_API_KEY=AIza_your_key_here')
-        print()
+            print(f"  - {issue}")
+        print("\nEdit config.py or set environment variables before running.")
         return False
     return True
 
 
-def run_pipeline(query: str, image_path: str = None, quality: str = None):
-    """
-    Run the full AEVE pipeline.
+# ---------------------------------------------------------------------------
+# AEVE 2.0 path
+# ---------------------------------------------------------------------------
 
-    Args:
-        query:      The math topic or question
-        image_path: Optional path to an image (for OCR input)
-        quality:    Manim quality: "low", "medium", "high", "4k"
-    """
+
+async def _run_aeve2(
+    query: str,
+    *,
+    image_path: str | None,
+    target_seconds: int,
+    output_dir: Path | None,
+) -> None:
+    """Run the AEVE 2.0 pipeline and print a final report."""
+    from pipeline.orchestrator import run_pipeline
+
+    image_hint: str | None = None
+    if image_path:
+        image_hint = f"User uploaded an image: {image_path}"
+
+    start = time.time()
+    result = await run_pipeline(
+        query,
+        target_seconds=target_seconds,
+        image_hint=image_hint,
+        output_dir=output_dir,
+    )
+    elapsed = time.time() - start
+
+    audio_total = sum(a.duration_s for a in result.scene_audios)
+    final = result.final_video
+
+    print()
+    print("=" * 60)
+    print("  AEVE 2.0 — pipeline complete")
+    print("=" * 60)
+    print(f"  Topic:       {result.solution.topic}")
+    print(f"  Difficulty:  {result.solution.difficulty}")
+    print(f"  Scenes:      {len(result.storyboard.scenes)}")
+    print(f"  Audio total: {audio_total:.2f}s")
+    print(f"  Final mp4:   {final.mp4_path}")
+    print(
+        f"  Final dur:   {final.total_duration_s:.2f}s "
+        f"(drift {final.total_drift_ms:+d}ms)"
+    )
+    print(f"  Wall clock:  {int(elapsed // 60)}m {int(elapsed % 60)}s")
+    print("=" * 60)
+
+
+# ---------------------------------------------------------------------------
+# Legacy AEVE 1.0 path (preserved for the side-by-side period)
+# ---------------------------------------------------------------------------
+
+
+def _run_legacy(query: str, image_path: str | None, quality: str | None) -> str:
+    """Legacy AEVE 1.0 flow — Phase I/II/III + assemble_final_video()."""
     start_time = time.time()
 
-    # Set quality
     if quality:
         quality_map = {"low": "-ql", "medium": "-qm", "high": "-qh", "4k": "-qk"}
         config.MANIM_QUALITY = quality_map.get(quality, "-ql")
 
-    logger.info(f"Topic:   {query[:100]}{'...' if len(query) > 100 else ''}")
-    logger.info(f"Image:   {image_path or 'None'}")
-    logger.info(f"Quality: {config.MANIM_QUALITY}")
-    logger.info(f"Output:  {config.OUTPUT_DIR}")
-    logger.info(f"Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
-    logger.info("")
+    logger.info(f"[legacy] Topic:   {query[:100]}{'...' if len(query) > 100 else ''}")
+    logger.info(f"[legacy] Image:   {image_path or 'None'}")
+    logger.info(f"[legacy] Quality: {config.MANIM_QUALITY}")
+    logger.info(f"[legacy] Output:  {config.OUTPUT_DIR}")
+    logger.info(f"[legacy] Started: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}")
 
-    # ═══════════════════════════════════════════════════════════
-    # PHASE I: Knowledge Distillation
-    # ═══════════════════════════════════════════════════════════
     from pipeline.phase1_knowledge import run_phase1
-    script_1 = run_phase1(query, image_path)
 
-    # Save Script 1 for reference
+    script_1 = run_phase1(query, image_path)
     script1_path = os.path.join(config.OUTPUT_DIR, "script_1_deep_solution.md")
     with open(script1_path, "w", encoding="utf-8") as f:
         f.write(script_1)
-    logger.info(f"Script 1 saved → {script1_path}")
+    logger.info(f"[legacy] Script 1 saved -> {script1_path}")
 
-    # ═══════════════════════════════════════════════════════════
-    # PHASE II: Consensus Committee
-    # ═══════════════════════════════════════════════════════════
     from pipeline.phase2_committee import run_phase2
-    scene_manifest = run_phase2(script_1)
 
-    # Save Scene Manifest for reference
+    scene_manifest = run_phase2(script_1)
     manifest_path = os.path.join(config.OUTPUT_DIR, "scene_manifest.json")
     with open(manifest_path, "w", encoding="utf-8") as f:
         json.dump(scene_manifest, f, indent=2, ensure_ascii=False)
-    logger.info(f"Scene manifest saved → {manifest_path}")
+    logger.info(f"[legacy] Scene manifest saved -> {manifest_path}")
 
-    # ═══════════════════════════════════════════════════════════
-    # PHASE III: Distribution (Audio + Code generation)
-    # ═══════════════════════════════════════════════════════════
     from pipeline.phase3_distributor import run_phase3
-    phase3_results = run_phase3(scene_manifest, script_1)
 
-    # Save Phase 3 results
+    phase3_results = run_phase3(scene_manifest, script_1)
     results_path = os.path.join(config.OUTPUT_DIR, "phase3_results.json")
     with open(results_path, "w", encoding="utf-8") as f:
-        # Make results JSON-serializable
         serializable = []
         for r in phase3_results:
             s = {**r}
@@ -134,52 +160,42 @@ def run_pipeline(query: str, image_path: str = None, quality: str = None):
             serializable.append(s)
         json.dump(serializable, f, indent=2, default=str)
 
-    # ═══════════════════════════════════════════════════════════
-    # ASSEMBLY: Render + Merge + Final Video
-    # ═══════════════════════════════════════════════════════════
     from renderer.assembler import assemble_final_video
+
     final_video = assemble_final_video(phase3_results)
 
-    # ═══════════════════════════════════════════════════════════
-    # DONE
-    # ═══════════════════════════════════════════════════════════
     elapsed = time.time() - start_time
-    minutes = int(elapsed // 60)
-    seconds = int(elapsed % 60)
-
     print()
-    print("╔══════════════════════════════════════════════════════════╗")
-    print("║                  ✓ PIPELINE COMPLETE                    ║")
-    print("╠══════════════════════════════════════════════════════════╣")
-    print(f"║  Final Video:  {final_video:<40} ║")
-    print(f"║  Time Elapsed: {minutes}m {seconds}s{' ' * 35}║")
-    print(f"║  Scenes:       {sum(1 for r in phase3_results if r['status'] == 'success')}/{len(phase3_results)} successful{' ' * 25}║")
-    print("╠══════════════════════════════════════════════════════════╣")
-    print("║  All artifacts saved in: output/                       ║")
-    print("║  • script_1_deep_solution.md  (Math solution)          ║")
-    print("║  • scene_manifest.json        (Scene breakdown)        ║")
-    print("║  • scenes/                    (Manim Python files)     ║")
-    print("║  • audio/                     (MP3 narration)          ║")
-    print("║  • logs/pipeline.log          (Full debug log)         ║")
-    print("╚══════════════════════════════════════════════════════════╝")
-
+    print("=" * 60)
+    print("  AEVE 1.0 (legacy) — pipeline complete")
+    print("=" * 60)
+    print(f"  Final Video: {final_video}")
+    print(f"  Wall clock:  {int(elapsed // 60)}m {int(elapsed % 60)}s")
+    print(
+        f"  Scenes:      "
+        f"{sum(1 for r in phase3_results if r['status'] == 'success')}/{len(phase3_results)}"
+    )
+    print("=" * 60)
     return final_video
 
 
-def main():
-    """CLI entrypoint."""
+# ---------------------------------------------------------------------------
+# CLI
+# ---------------------------------------------------------------------------
+
+
+def main() -> None:
     parser = argparse.ArgumentParser(
         description="AEVE — Autonomous Educational Video Engine",
         formatter_class=argparse.RawDescriptionHelpFormatter,
         epilog="""
 Examples:
   python main.py "Prove the Pythagorean theorem"
-  python main.py "What is the quadratic formula? Derive it."
-  python main.py --image problem.png
-  python main.py --quality high "Explain the chain rule in calculus"
+  python main.py "Derive the quadratic formula" --target-seconds 90
+  python main.py --image problem.png "Explain this image"
+  python main.py --legacy "Old pipeline" --quality high
         """,
     )
-
     parser.add_argument(
         "query",
         nargs="?",
@@ -187,47 +203,75 @@ Examples:
     )
     parser.add_argument(
         "--image", "-i",
-        help="Path to an image file (e.g., a photo of a math problem)",
+        help="Path to an image file (e.g. a photo of a problem)",
+    )
+    parser.add_argument(
+        "--target-seconds", "-t",
+        type=int,
+        default=60,
+        help="Target total runtime in seconds (AEVE 2.0). Clamped to [20, 180].",
+    )
+    parser.add_argument(
+        "--output-dir",
+        type=Path,
+        default=None,
+        help="Output directory (default: config.OUTPUT_DIR).",
+    )
+    parser.add_argument(
+        "--legacy",
+        action="store_true",
+        help="Use the AEVE 1.0 10-agent pipeline (preserved for backward compat).",
     )
     parser.add_argument(
         "--quality", "-q",
         choices=["low", "medium", "high", "4k"],
-        default="low",
-        help="Video quality (default: low for fast development)",
+        default=None,
+        help="Manim quality flag. AEVE 1.0 only — AEVE 2.0 hardcodes 1080p30.",
     )
-
     args = parser.parse_args()
 
-    # Validate input
     if not args.query and not args.image:
         parser.error("Please provide a query or --image path")
-
-    query = args.query or "Analyze and solve the mathematical problem in the attached image."
+    query = args.query or "Analyze and solve the math problem in the attached image."
 
     print_banner()
-
-    # Check API keys
     if not check_api_keys():
         sys.exit(1)
 
     try:
-        run_pipeline(query, args.image, args.quality)
-    except LLMError as e:
-        logger.error(f"\n{e}")
-        print("\n✗ Pipeline failed due to an LLM error. Check the log above for details.")
+        if args.legacy:
+            if args.quality is None:
+                args.quality = "low"
+            _run_legacy(query, args.image, args.quality)
+        else:
+            if args.quality is not None:
+                print(
+                    "[note] --quality is ignored in AEVE 2.0 mode "
+                    "(hardcoded 1080p30). Pass --legacy to use it."
+                )
+            asyncio.run(
+                _run_aeve2(
+                    query,
+                    image_path=args.image,
+                    target_seconds=args.target_seconds,
+                    output_dir=args.output_dir,
+                )
+            )
+    except LLMError as exc:
+        logger.error(f"\n{exc}")
+        print("\nPipeline failed due to an LLM error. See the log for details.")
         print(f"  Full debug log: {os.path.join(config.LOG_DIR, 'pipeline.log')}")
         sys.exit(1)
-    except OutputValidationError as e:
-        logger.error(f"\n{e}")
-        print("\n✗ Pipeline failed: a model returned unexpected output.")
-        print(f"  Full debug log: {os.path.join(config.LOG_DIR, 'pipeline.log')}")
+    except OutputValidationError as exc:
+        logger.error(f"\n{exc}")
+        print("\nPipeline failed: a model returned unexpected output.")
         sys.exit(1)
     except KeyboardInterrupt:
-        print("\n\n⚠ Pipeline interrupted by user.")
+        print("\n\nPipeline interrupted by user.")
         sys.exit(0)
-    except Exception as e:
-        logger.exception(f"Unexpected error: {e}")
-        print(f"\n✗ Unexpected error: {e}")
+    except Exception as exc:
+        logger.exception(f"Unexpected error: {exc}")
+        print(f"\nUnexpected error: {exc}")
         print(f"  Full debug log: {os.path.join(config.LOG_DIR, 'pipeline.log')}")
         sys.exit(1)
 
