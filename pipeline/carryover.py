@@ -23,7 +23,12 @@ import json
 import logging
 from pathlib import Path
 
-from pipeline.schemas import SceneCarry
+from pipeline.schemas import (
+    CarryObject,
+    SceneCarry,
+    StoryboardScene,
+    StyleManifest,
+)
 
 logger = logging.getLogger("AEVE")
 
@@ -64,4 +69,82 @@ def empty_carry(scene_id: str) -> SceneCarry:
     return SceneCarry(scene_id=scene_id, objects=[])
 
 
-__all__ = ["carry_path", "read_carry", "write_carry", "empty_carry"]
+# ---------------------------------------------------------------------------
+# Predicted carry from storyboard data — used by the orchestrator to give
+# scene N+1's Animator a substantive `prior_carry` block without waiting on
+# the previous scene's render.
+# ---------------------------------------------------------------------------
+
+
+def _kind_for_name(name: str) -> str:
+    """Best-guess Manim primitive for a carry-object name.
+
+    Heuristic: keywords in the name pick the kind. Falls back to `Text`
+    because that's the safest default the Animator can place at any zone.
+    """
+    low = name.lower()
+    if any(kw in low for kw in ("eq", "formula", "math", "expr")):
+        return "MathTex"
+    if "caption" in low or "label" in low:
+        return "MarkupText"
+    return "Text"
+
+
+def _zone_for_name(
+    name: str, layout_zones: dict[str, tuple[float, float]]
+) -> tuple[float, float, float]:
+    """Pick a layout zone for a carry-object name.
+
+    The mapping is intentionally conservative: title-ish objects go to the
+    title zone, equation-ish objects go to the main zone, caption-ish go to
+    the caption zone, anything else lands at the main zone (the default
+    "where the action happens" anchor).
+    """
+    low = name.lower()
+    fallback_main = layout_zones.get("main", (0.0, 0.0))
+    if "title" in low or "header" in low:
+        x, y = layout_zones.get("title", fallback_main)
+    elif "caption" in low or "footer" in low:
+        x, y = layout_zones.get("caption", fallback_main)
+    elif "left" in low:
+        x, y = layout_zones.get("left_rail", fallback_main)
+    elif "right" in low:
+        x, y = layout_zones.get("right_rail", fallback_main)
+    else:
+        x, y = fallback_main
+    return float(x), float(y), 0.0
+
+
+def predict_carry_from_storyboard(
+    prior_scene: StoryboardScene,
+    style: StyleManifest,
+) -> SceneCarry:
+    """Derive a predicted `SceneCarry` for the scene FOLLOWING `prior_scene`.
+
+    Each name in `prior_scene.carryover_objects` is mapped to a kind +
+    layout-zone position by the heuristics above. The result is what the
+    Animator for scene N+1 will see in its `prior_carry` block.
+
+    The `scene_id` on the returned `SceneCarry` is the prior scene's id —
+    that's the convention `read_carry` follows (the file is named
+    `scene_<prior_id>.carry.json`).
+    """
+    objects: list[CarryObject] = []
+    for name in prior_scene.carryover_objects:
+        if not name or not name.strip():
+            continue
+        kind = _kind_for_name(name)
+        position = _zone_for_name(name, style.layout_zones)
+        objects.append(
+            CarryObject(name=name.strip(), kind=kind, position=position)
+        )
+    return SceneCarry(scene_id=prior_scene.scene_id, objects=objects)
+
+
+__all__ = [
+    "carry_path",
+    "read_carry",
+    "write_carry",
+    "empty_carry",
+    "predict_carry_from_storyboard",
+]

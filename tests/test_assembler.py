@@ -1,9 +1,5 @@
 """
-Tests for renderer.assembler — AEVE 2.0 normalize-then-concat path.
-
-The legacy `assemble_final_video()` is intentionally NOT tested here — it's
-preserved for backwards-compat with `app.py`/`main.py` during the side-by-side
-period and will be retired in Day 6.
+Tests for renderer.assembler — the AEVE 2.0 normalize-then-concat path.
 """
 
 from __future__ import annotations

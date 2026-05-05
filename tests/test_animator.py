@@ -266,9 +266,10 @@ def test_animate_repair_round_recovers(monkeypatch, tmp_path: Path):
     assert bak.exists()
 
 
-def test_animate_two_failures_raise(monkeypatch, tmp_path: Path):
-    """If both attempts fail gates, animate() raises LLMError."""
-    from pipeline.llm_clients.errors import LLMError
+def test_animate_two_failures_fall_back_to_deterministic(monkeypatch, tmp_path: Path):
+    """If both attempts fail gates, animate() writes the deterministic fallback
+    scene (via renderer.healer.write_fallback_scene) rather than raising. The
+    pipeline must not block on a single scene's animation failure."""
     style = build_style_manifest()
 
     async def fake_call_agent(*, role, user_prompt, system_prompt=None, **kwargs):
@@ -276,16 +277,38 @@ def test_animate_two_failures_raise(monkeypatch, tmp_path: Path):
 
     monkeypatch.setattr(animator_mod, "call_agent", fake_call_agent)
 
-    with pytest.raises(LLMError, match="gate-repair exhausted"):
-        asyncio.run(
-            animate(
-                scene=_scene("001"),
-                audio=_audio("001", duration_s=5.0),
-                prior_carry=None,
-                style=style,
-                scenes_dir=tmp_path,
-            )
+    scene_code = asyncio.run(
+        animate(
+            scene=_scene("001"),
+            audio=_audio("001", duration_s=5.0),
+            prior_carry=None,
+            style=style,
+            scenes_dir=tmp_path,
         )
+    )
+
+    # Returned SceneCode points at a file that parses + passes gates.
+    assert scene_code.scene_id == "001"
+    assert scene_code.class_name == "Scene001"
+    assert scene_code.ast_validated is True
+    assert scene_code.target_runtime_s == 5.0
+    assert scene_code.py_path.exists()
+
+    # Both failing attempts left .bak files for diagnostics.
+    bak1 = tmp_path / "scene_001.attempt_1.py.bak"
+    bak2 = tmp_path / "scene_001.attempt_2.py.bak"
+    assert bak1.exists()
+    assert bak2.exists()
+
+    # The fallback file's body uses the storyboard's title (deterministic
+    # Jinja signature). Confirms we used write_fallback_scene, not the
+    # broken LLM output.
+    body = scene_code.py_path.read_text(encoding="utf-8")
+    assert "class Scene001" in body
+    assert "FadeOut" in body
+    # The fallback partitions runtime via _allocate_runtimes — predicted must
+    # land in-band by construction.
+    assert 0.92 * 5.0 <= scene_code.predicted_runtime_s <= 1.05 * 5.0
 
 
 def test_animate_uses_carry_when_provided(monkeypatch, tmp_path: Path):

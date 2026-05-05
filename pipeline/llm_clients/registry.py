@@ -55,11 +55,18 @@ class ModelSpec:
 # openrouter.resolve_slug() so a deprecation never hard-stops the pipeline.
 # ---------------------------------------------------------------------------
 
+# Slug currency last verified by probe_keys.py on 2026-05-05.
+# Three previously-listed slugs were retired here because the providers no
+# longer serve them: `moonshotai/kimi-k2-instruct` (gone from Groq),
+# `nvidia/nemotron-3-coder` (404 on OpenRouter), and `zai/glm-4.6` (404 on
+# OpenRouter). When promoting a new slug, run `python probe_keys.py` first
+# and only land slugs that returned `OK`.
 ROUTES: dict[AgentRole, list[ModelSpec]] = {
     "solver": [
-        ModelSpec("groq", "moonshotai/kimi-k2-instruct", temperature=0.2, max_tokens=8192),
-        ModelSpec("openrouter", "deepseek/deepseek-chat-v3", temperature=0.2, max_tokens=8192),
-        ModelSpec("groq", "llama-3.3-70b-versatile", temperature=0.2, max_tokens=8192),
+        # Solver outputs DeepSolution JSON — long-form math; 6k is comfortable.
+        ModelSpec("groq", "llama-3.3-70b-versatile", temperature=0.2, max_tokens=6144),
+        ModelSpec("openrouter", "deepseek/deepseek-chat-v3", temperature=0.2, max_tokens=6144),
+        ModelSpec("groq", "llama-3.1-8b-instant", temperature=0.2, max_tokens=6144),
     ],
     "director": [
         ModelSpec("groq", "llama-3.3-70b-versatile", temperature=0.4, max_tokens=4096),
@@ -68,18 +75,21 @@ ROUTES: dict[AgentRole, list[ModelSpec]] = {
     ],
     "narrator": [
         ModelSpec("groq", "llama-3.3-70b-versatile", temperature=0.5, max_tokens=2048),
-        ModelSpec("openrouter", "zai/glm-4.6", temperature=0.5, max_tokens=2048),
+        ModelSpec("openrouter", "meta-llama/llama-3.3-70b-instruct", temperature=0.5, max_tokens=2048),
         ModelSpec("groq", "llama-3.1-8b-instant", temperature=0.5, max_tokens=2048),
     ],
+    # Manim scene files are ~1 KB / a few hundred tokens. 4096 leaves plenty of
+    # headroom and avoids OpenRouter free-tier 402 "you can only afford N" errors
+    # observed when 8192 was requested.
     "animator": [
-        ModelSpec("openrouter", "nvidia/nemotron-3-coder", temperature=0.2, max_tokens=8192),
-        ModelSpec("openrouter", "qwen/qwen3-coder", temperature=0.2, max_tokens=8192),
-        ModelSpec("openrouter", "deepseek/deepseek-chat-v3", temperature=0.2, max_tokens=8192),
+        ModelSpec("openrouter", "qwen/qwen3-coder", temperature=0.2, max_tokens=4096),
+        ModelSpec("openrouter", "deepseek/deepseek-chat-v3", temperature=0.2, max_tokens=4096),
+        ModelSpec("openrouter", "deepseek/deepseek-r1", temperature=0.2, max_tokens=4096),
     ],
     "healer": [
-        ModelSpec("openrouter", "deepseek/deepseek-r1", temperature=0.1, max_tokens=8192),
-        ModelSpec("openrouter", "nvidia/nemotron-3-coder", temperature=0.1, max_tokens=8192),
-        ModelSpec("openrouter", "qwen/qwen3-coder", temperature=0.1, max_tokens=8192),
+        ModelSpec("openrouter", "deepseek/deepseek-r1", temperature=0.1, max_tokens=4096),
+        ModelSpec("openrouter", "qwen/qwen3-coder", temperature=0.1, max_tokens=4096),
+        ModelSpec("openrouter", "deepseek/deepseek-chat-v3", temperature=0.1, max_tokens=4096),
     ],
 }
 

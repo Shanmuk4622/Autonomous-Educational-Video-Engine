@@ -5,7 +5,18 @@
       "Bash(type .gitignore)",
       "Read(//c/Users/shanm/anaconda3/Scripts/**)",
       "Read(//c/Users/shanm/**)",
-      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/python.exe *)"
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/python.exe *)",
+      "Bash(rm -f pipeline/phase1_knowledge.py pipeline/phase2_committee.py pipeline/phase3_distributor.py pipeline/sync_engine.py pipeline/audio_stream.py pipeline/code_stream.py renderer/manim_runner.py)",
+      "Bash(rm -rf models/)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/latex.exe --version)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/initexmf.exe --report)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/initexmf.exe --show-config-value=[MPM]AutoInstall)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/mpm.exe --list)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/initexmf.exe --set-config-value '[MPM]AutoInstall=1')",
+      "Read(//tmp/**)",
+      "Bash(/c/Users/shanm/anaconda3/envs/cv_conda/Scripts/dvisvgm.exe --no-fonts --bbox=preview warmup.dvi)",
+      "Bash(git add *)",
+      "Bash(git rm *)"
     ]
   }
 }

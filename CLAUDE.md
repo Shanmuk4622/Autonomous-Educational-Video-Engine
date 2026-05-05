@@ -922,45 +922,171 @@ sanity). 5 deselected = the original 2 live-marked tests + 2 e2e tests +
   side-by-side period. If you need to gate a Day 7 feature, add a new
   form field with a sensible default.
 
-## ⏭️ Day 7 — Next up
+## ✅ Day 7 — Continuity + golden compare + legacy retirement (complete, 2026-05-03)
 
-Day 7 closes the loop on the rewrite by retiring legacy code paths and
-landing the polish features that needed real renders to validate.
+Day 7 retired the AEVE 1.0 codebase entirely, wired real cross-scene
+continuity through the storyboard, finished the golden-frame compare
+harness, and replaced the legacy frontend boxes with six AEVE 2.0 phases.
+The web UI no longer has a mode toggle; the CLI has no `--legacy` flag.
 
-1. **Bootstrap the golden frame.** Run `pytest -m live --update-golden`
-   on a host with MiKTeX + Manim installed; the test should write
-   `tests/golden/pythagoras_60s/expected.png` and metadata, then verify
-   it on a re-run. Wire the actual render-and-compare logic in
-   `tests/test_golden.py` (it's currently a skip placeholder).
-2. **Cross-scene continuity from storyboard.** Make `_phase4_fanout`
-   sequential per scene, reading scene N's storyboard
-   `carryover_objects` to populate scene N+1's `prior_carry` with
-   predicted positions (default to MAIN_POS if name doesn't disambiguate).
-   Animator's `prior_carry` in the user prompt becomes substantively
-   non-empty for scene 2+.
-3. **Frontend SSE update.** `frontend/templates/index.html` +
-   `frontend/static/*.js` — extend the pipeline diagram to render six
-   AEVE 2.0 phases (currently four legacy boxes). Read mode from form;
-   default to `v2`.
-4. **Retire legacy paths.** Delete `pipeline/phase{1,2,3}_*.py`,
-   `pipeline/sync_engine.py`, `renderer/manim_runner.py`, the
-   `assemble_final_video` / `merge_audio_video` / `concatenate_scenes`
-   functions in `renderer/assembler.py`, and the `_run_legacy` /
-   `run_pipeline_job` (legacy worker) blocks in `main.py` / `app.py`.
-   `models/llm_client.py` is the harder call — it's the legacy router;
-   the AEVE 2.0 clients live in `pipeline/llm_clients/`. Decide whether
-   to keep `models/llm_client.py` for its `LLMError` / `logger` exports
-   (and rewire those into `pipeline.llm_clients.errors`), or absorb +
-   delete entirely.
-5. **README polish.** Once legacy is gone, drop the side-by-side
-   language. The "Status" banner becomes "AEVE 2.0 — generally
-   available" or similar.
-6. **`pyproject.toml` cleanup.** Remove `models/` from the package
-   discovery list once the legacy router is retired.
+### Files created / changed
 
-Day 7 exits when:
-- The golden test passes deterministically on a fresh checkout (after
-  bootstrap).
-- All `phase{1,2,3}_*.py` files are deleted; `pytest` still passes.
-- `python main.py "..."` and `python app.py` work end-to-end with no
-  legacy code path reachable.
+| File | Purpose |
+|---|---|
+| `pipeline/carryover.py` (extended) | Added `predict_carry_from_storyboard(prior_scene, style) → SceneCarry`. Each name in `prior_scene.carryover_objects` is mapped to a Manim primitive kind (`title*` → `Text`, `eq*`/`formula*`/`math*` → `MathTex`, `caption*`/`label*` → `MarkupText`, default → `Text`) and a layout-zone position (`title` → TITLE_POS, `caption` → CAPTION_POS, `left*` → LEFT_RAIL_POS, `right*` → RIGHT_RAIL_POS, default → MAIN_POS). Pure heuristic, deterministic, no LLM. |
+| `pipeline/orchestrator.py` (extended) | `_phase4_fanout` now passes a substantive `prior_carry` to scene N+1's Animator (predicted from `storyboard.scenes[N-1]`). Scene 001 still gets `empty_carry`. The fan-out stays parallel — no dependency on prior render output. |
+| `tests/test_carryover.py` (extended) | 6 new tests for `predict_carry_from_storyboard`: empty input, title→Text+TITLE_POS, formula→MathTex+MAIN_POS, caption/label→MarkupText+CAPTION_POS, left/right→rail zones, blank-name stripping. |
+| `tests/conftest.py` (new) | Registers the `--update-golden` pytest CLI flag used by `tests/test_golden.py`. Pytest plugin hooks must live in `conftest.py` — the duplicate registration in the test file was a bug, now removed. |
+| `tests/test_golden.py` (rewrite) | Real render+compare logic. `_run_manim` calls `python -m manim render` at 854×480/30fps. `_extract_frame` runs `ffmpeg -ss <t> -frames:v 1` to grab a single PNG. `_compare_pngs` uses `PIL.ImageChops.difference` and counts pixels where any RGB channel exceeds 8/255 — fail if > 2% of pixels mismatch. With `--update-golden`, the rendered frame REPLACES `expected.png` so the next live run compares against it. |
+| `frontend/templates/index.html` (rewrite) | Six AEVE 2.0 phase boxes (`phase0`...`phase6`) replacing the four legacy boxes. Quality selector replaced with a `target_seconds` slider (20-180s, default 60). Each phase box lists the agent's primary + 2 fallback models with `.fallback` opacity. Result section adds a `result-meta` line showing `<duration>s · drift +Nms`. |
+| `frontend/static/app.js` (extended) | Drops the `quality-btn` handler, adds the `target_seconds` slider listener. `formData` posts `target_seconds` + `mode=v2` instead of `quality`. `handleComplete` reads `data.duration_s` / `data.drift_ms` and renders them into `result-meta`. |
+| `frontend/static/style.css` (extended) | Added `.target-slider`, `.hint`, `.model-tag.fallback`, `.result-meta` rules (about 25 lines at the bottom of the file). |
+| `main.py` (rewrite) | Stripped: `_run_legacy`, `--legacy`, `--quality`, `legacy`-mode banners, the `_run_aeve2 → _run_legacy` dispatch. Now ~150 lines. Imports `LLMError` / `OutputValidationError` from `pipeline.llm_clients.errors`; uses `logging.getLogger("AEVE")` directly. |
+| `app.py` (extended) | Stripped: `run_pipeline_job` (legacy worker), `mode == "legacy"` dispatch, `models.llm_client` imports, the legacy form fields. `/start` is now AEVE 2.0-only: form fields are `query`, `image`, `target_seconds`. `models.llm_client` import in `run_pipeline_job_v2` replaced with stdlib `logging.getLogger("AEVE")`. |
+| `renderer/assembler.py` (rewrite) | Stripped: `_run_ffmpeg_via_python`, `merge_audio_video`, `concatenate_scenes`, `assemble_final_video`. The `models.llm_client` import at the top replaced with stdlib `logging.getLogger("AEVE")`. File is now ~190 lines (down from ~370). |
+| `tests/test_no_legacy_sync.py` (rewrite) | Now has FOUR gates (was 2): (a) the legacy file list stays deleted, (b) AEVE 2.0 modules don't import `pipeline.sync_engine`, (c) AEVE 2.0 modules don't import from the legacy `models/` package, (d) `renderer/assembler.py` doesn't reference `sync_engine`. |
+| `pyproject.toml` (changed) | Removed `models*` from `[tool.setuptools.packages.find].include`. `models/` no longer ships as a package. |
+| **DELETED** | `pipeline/phase1_knowledge.py`, `pipeline/phase2_committee.py`, `pipeline/phase3_distributor.py`, `pipeline/sync_engine.py`, `pipeline/audio_stream.py`, `pipeline/code_stream.py`, `renderer/manim_runner.py`, `models/llm_client.py`, `models/__init__.py`, `models/` (the entire directory). |
+
+### Test results
+
+```
+$ /c/Users/shanm/anaconda3/envs/cv_conda/python.exe -m pytest -q
+.................................................................. (173)
+173 passed, 5 deselected, 4 warnings in 5.36s
+```
+
+173 = 165 (Day 6) + 8 (Day 7: 6 new carryover tests + 2 new sync gates).
+The legacy-resurrection gate (`test_legacy_files_stay_deleted`) and
+the legacy-models-import gate (`test_aeve2_modules_do_not_import_legacy_models_package`)
+both pass.
+
+### Important contract details a future session must respect
+
+- **AEVE 1.0 is DEAD.** The CI gate fails loudly if anyone recreates a
+  `phase{1,2,3}_*.py`, `sync_engine.py`, `manim_runner.py`, or the
+  `models/` package. To bring back any legacy behavior, refactor it
+  into AEVE 2.0 (don't recreate the file).
+- **`predict_carry_from_storyboard` is a heuristic.** Names like
+  "title" / "eq_a" / "caption_x" / "left_panel" map to specific zones
+  + kinds. Names that don't match any keyword default to `Text` at
+  `MAIN_POS`. If you add new layout zones to `pipeline/style.py`, add
+  matching keyword routes in `_zone_for_name` AND `_kind_for_name`.
+  The Storyboard's `carryover_objects` field is unconstrained — it's
+  just a `list[str]`.
+- **The cross-scene continuity is storyboard-driven, not render-driven.**
+  Phase 4 doesn't wait for phase 5; instead it derives predicted
+  positions from the storyboard. The render-time `emit_carry` JSON
+  files are still useful for diagnostics (and for a Day 8 carry-aware
+  Healer feature) but the orchestrator doesn't read them.
+- **The golden compare uses a hand-curated scene that doesn't import
+  `output._style`.** This is intentional: golden frames must be stable
+  across model rolls AND across StyleManifest changes. The fixture
+  uses literal `BLUE`/`WHITE` color names from `manim` directly.
+  Don't "improve" it by importing the AEVE 2.0 palette.
+- **`pytest_addoption` only works in `conftest.py`** at the project
+  level. If a test file declares it, pytest silently ignores it. Day 7
+  bug: the duplicate declaration in `test_golden.py` was misleading
+  even though it was a no-op. The conftest is now authoritative.
+- **`tests/test_no_legacy_sync.py` expanded from 2 to 4 tests.** It's
+  the firewall between the rewrite and any future regression. If you
+  retire more code in Day 8+, add entries to
+  `LEGACY_FILES_THAT_MUST_STAY_DELETED`. If you need to add a new
+  package whose name happens to start with `models`, **rename it** —
+  changing the regex in `_LEGACY_MODELS_RE` would weaken the gate.
+
+## 🔬 Live probe findings (2026-05-05, supersedes 2026-05-03)
+
+The new `probe_keys.py` script enumerates every configured key, lists
+each provider's models, runs a tiny chat completion on each (key, model)
+pair, and prints an ASCII matrix. Run it with:
+
+```
+conda activate cv_conda
+python probe_keys.py             # default: full Groq matrix + AEVE-routed OR/Gemini
+python probe_keys.py --openrouter-full   # also test all 372 OpenRouter models (slow)
+```
+
+Full JSON dumps land at `output/key_probe_<UTC_TIMESTAMP>.json`.
+
+### Current state (probed 2026-05-05)
+
+| Provider | State |
+|---|---|
+| **Groq** (4 keys G1-G4) | All 4 keys ✓. Each key sees 16 models; both AEVE-routed Llama variants (`llama-3.3-70b-versatile`, `llama-3.1-8b-instant`) succeed on every key with sub-300 ms latency. |
+| **OpenRouter** (1 key) | Working ✓. `/key` returns 200, free tier, $0.0004 used. 372 models listed. |
+| **Google** (1 key) | **EXPIRED.** `/v1beta/models` returns 400 "API key expired. Please renew the API key." Not used by current ROUTES — Gemini fallback via `pipeline/llm_clients/gemini.py` is dead until refreshed. |
+
+### Stale routing slugs — FIXED 2026-05-05
+
+Three slugs in the original `ROUTES` table no longer resolved:
+
+* `groq / moonshotai/kimi-k2-instruct` (Solver primary) → not in Groq's `/models`
+* `openrouter / nvidia/nemotron-3-coder` (Animator primary, Healer fallback 1) → 400 on chat
+* `openrouter / zai/glm-4.6` (Narrator fallback 1) → 400 on chat
+
+`pipeline/llm_clients/registry.py::ROUTES` was updated. Promotions:
+
+| Role | Old primary | New primary | Reason |
+|---|---|---|---|
+| solver | `groq/moonshotai/kimi-k2-instruct` | `groq/llama-3.3-70b-versatile` | Kimi gone, Llama 70B verified on all 4 Groq keys. |
+| animator | `openrouter/nvidia/nemotron-3-coder` | `openrouter/qwen/qwen3-coder` | Nemotron 3 doesn't exist; qwen3-coder is the strongest verified non-premium coder. |
+| narrator (fb1) | `openrouter/zai/glm-4.6` | `openrouter/meta-llama/llama-3.3-70b-instruct` | glm-4.6 doesn't exist; Llama-70B-instruct verified. |
+| healer (fb1) | `openrouter/nvidia/nemotron-3-coder` | `openrouter/qwen/qwen3-coder` | Same as animator. |
+| animator (fb2) | `openrouter/deepseek/deepseek-chat-v3` | unchanged | Verified working. |
+| animator (fb3, NEW) | (was nothing) | `openrouter/deepseek/deepseek-r1` | Reasoning model as last-ditch coder fallback. |
+
+After the change every role's chain is fully verified by the probe — no
+DOWN markers. Re-run `python probe_keys.py` to confirm.
+
+### How OpenRouter slug resolution behaved
+
+The `deepseek/deepseek-chat-v3` slug does NOT appear in OpenRouter's
+`/models` listing (per probe), but chat completions against it return
+200. OpenRouter's slug router is more permissive than its model
+catalogue — historical slugs continue to resolve to current variants.
+Don't strip slugs from `ROUTES` based on `/models` membership alone;
+test the chat endpoint via `probe_keys.py` first.
+
+### What this validated
+
+* The Groq client + per-request key rotation works correctly across all 4 keys.
+* The OpenRouter client + slug resolver work; previous "401 User not found"
+  finding was either a transient state or the key was refreshed since 2026-05-03.
+* The hard fallback chain transitions on `RateLimitError` / `ProviderError`
+  (the 404s on dead Groq slugs were absorbed by the chain).
+* `call_agent_json` parser + repair-round logic accepts the JSON the
+  fallback model returns.
+* Schema validation: `DeepSolution.model_validate_json(...)` passes on
+  the live response.
+
+### Open operational issue
+
+**Google API key is expired.** Currently `pipeline/llm_clients/gemini.py`
+is not referenced by any `ROUTES` entry, so this is not blocking. If
+you ever need the Gemini fallback path (e.g. for multimodal Solver per
+Day 8 follow-up #4), the user must regenerate `GOOGLE_API_KEY` at
+https://aistudio.google.com/apikey and paste it into `config.py`.
+
+## ⏭️ Day 8 — Possible follow-ups
+
+The rewrite is feature-complete. Reasonable next steps if needed:
+
+1. **Bootstrap `tests/golden/pythagoras_60s/expected.png`.** Run
+   `pytest -m live --update-golden tests/test_golden.py` on a host
+   with Manim + ffmpeg + (optionally) MiKTeX. Commit the resulting
+   PNG. The CI gate then runs every PR.
+2. **Carry-aware Healer.** When a render fails on scene N+1 and
+   `scene_<N>.carry.json` exists on disk, the Healer's user prompt
+   could include the actual rendered carry positions (not just the
+   storyboard's predicted ones). Useful when the prior scene's render
+   diverged from prediction.
+3. **SSE log noise reduction.** The pipeline_logger emits every
+   `[orchestrator]` / `[render]` / `[healer]` line; some of these are
+   too verbose for the browser console. Consider a log filter in
+   `app.patched_logger_emit` that drops DEBUG-level lines and demotes
+   render-progress lines.
+4. **Direct image-conditioning for Solver.** Today `image_path` becomes
+   a string `image_hint` in the user prompt. If Groq / OpenRouter
+   gain a multimodal route AEVE wants to use, pass the image bytes
+   directly instead of describing them.

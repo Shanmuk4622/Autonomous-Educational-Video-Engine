@@ -1,14 +1,14 @@
 """
-CI gate: AEVE 2.0 modules MUST NOT import the legacy `pipeline/sync_engine.py`.
+CI gate: legacy AEVE 1.0 files must stay deleted.
 
-The rewrite plan replaced the regex-based `self.wait()` patcher with the AST
-runtime predictor (`pipeline/timing.py::predict_manim_runtime`). The legacy
-file is preserved only because `pipeline/phase3_distributor.py` still uses
-it during the side-by-side period — once that goes away, this test
-loosens to "sync_engine.py does not exist."
+The rewrite plan replaced the regex-based `self.wait()` patcher
+(`pipeline/sync_engine.py`) with the AST runtime predictor
+(`pipeline/timing.py::predict_manim_runtime`). Day 7 retired the legacy
+codebase entirely. This test guards against accidental resurrection.
 
-If a future maintainer reintroduces a sync_engine import in any AEVE 2.0
-module, this test fails loudly.
+If a future maintainer recreates `sync_engine.py` or any of the legacy
+phase files, this test fails loudly. If they reintroduce an import of
+`pipeline.sync_engine` in any AEVE 2.0 module, the second test fails.
 """
 
 from __future__ import annotations
@@ -34,13 +34,43 @@ AEVE_2_FILES = [
     "renderer/render.py",
     "renderer/healer.py",
     "renderer/sanitize.py",
-    "renderer/assembler.py",  # tests for legacy alongside, but assemble() (2.0) must not depend
+    "renderer/assembler.py",
+    "main.py",
+    "app.py",
+]
+
+LEGACY_FILES_THAT_MUST_STAY_DELETED = [
+    "pipeline/phase1_knowledge.py",
+    "pipeline/phase2_committee.py",
+    "pipeline/phase3_distributor.py",
+    "pipeline/sync_engine.py",
+    "pipeline/audio_stream.py",
+    "pipeline/code_stream.py",
+    "renderer/manim_runner.py",
+    "models/llm_client.py",
+    "models/__init__.py",
 ]
 
 _SYNC_ENGINE_RE = re.compile(
     r"\b(from\s+pipeline\.sync_engine|import\s+pipeline\.sync_engine|"
     r"from\s+\.sync_engine|import\s+\.sync_engine)\b"
 )
+
+_LEGACY_MODELS_RE = re.compile(
+    r"\b(from\s+models\b|import\s+models\b)"
+)
+
+
+def test_legacy_files_stay_deleted():
+    """Day 7 retired these files. Recreating any of them is a regression."""
+    resurrected = [
+        p for p in LEGACY_FILES_THAT_MUST_STAY_DELETED
+        if (PROJECT_ROOT / p).exists()
+    ]
+    assert not resurrected, (
+        "Legacy AEVE 1.0 files must remain deleted (Day 7 retirement). "
+        "Resurrected: " + ", ".join(resurrected)
+    )
 
 
 def test_aeve2_modules_do_not_import_sync_engine():
@@ -61,20 +91,28 @@ def test_aeve2_modules_do_not_import_sync_engine():
     )
 
 
-def test_assembler_2_0_function_does_not_call_sync_engine():
-    """The new `assemble()` async function must not call into sync_engine
-    even if the legacy `assemble_final_video` is still in the same module."""
-    src = (PROJECT_ROOT / "renderer" / "assembler.py").read_text(encoding="utf-8")
-    # Find the source of the async `assemble` function only. Signature may
-    # span multiple lines, so we anchor on `async def assemble` and walk
-    # to the next top-level def or __all__ block.
-    match = re.search(
-        r"async def assemble\b.*?(?=\nasync def |\ndef |\n__all__|\Z)",
-        src,
-        re.DOTALL,
+def test_aeve2_modules_do_not_import_legacy_models_package():
+    """`models.llm_client` is gone; AEVE 2.0 uses
+    `pipeline.llm_clients.errors` + `logging.getLogger("AEVE")` directly."""
+    offenders: list[tuple[str, int, str]] = []
+    for relpath in AEVE_2_FILES:
+        full = PROJECT_ROOT / relpath
+        if not full.exists():
+            continue
+        for i, line in enumerate(full.read_text(encoding="utf-8").splitlines(), 1):
+            if _LEGACY_MODELS_RE.search(line):
+                offenders.append((relpath, i, line.strip()))
+
+    assert not offenders, (
+        "AEVE 2.0 modules must NOT import from the legacy `models/` package "
+        "(retired in Day 7).\nOffenders:\n  " +
+        "\n  ".join(f"{p}:{n}: {ln}" for p, n, ln in offenders)
     )
-    assert match, "could not locate async def assemble(...) in assembler.py"
-    body = match.group(0)
-    assert "sync_engine" not in body, (
-        "renderer.assembler.assemble() (AEVE 2.0) must not reference sync_engine"
+
+
+def test_assembler_does_not_reference_sync_engine():
+    """The Phase 6 assembler is purely AEVE 2.0 — no sync_engine anywhere."""
+    src = (PROJECT_ROOT / "renderer" / "assembler.py").read_text(encoding="utf-8")
+    assert "sync_engine" not in src, (
+        "renderer.assembler must not reference sync_engine"
     )

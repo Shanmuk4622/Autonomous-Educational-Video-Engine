@@ -405,6 +405,47 @@ the caller's. The test gate is in `tests/golden/`.
 
 ---
 
+## Dispatch layer (CLI + Web)
+
+AEVE 2.0 is the default everywhere; legacy AEVE 1.0 is opt-in.
+
+### `python main.py` (CLI)
+
+```
+python main.py "<query>"
+python main.py "<query>" --target-seconds 90 --output-dir ./run01
+python main.py --image diagram.png "Explain this image"
+```
+
+Flags:
+
+* `--target-seconds INT` — desired runtime (clamped to `[20, 180]` by the
+  `Storyboard` schema).
+* `--image PATH` — uploaded image; turned into an `image_hint` string
+  inlined into the Solver's user prompt.
+* `--output-dir PATH` — defaults to `config.OUTPUT_DIR`.
+
+### `python app.py` (Web)
+
+`POST /start` form fields:
+
+* `query` — the math topic (required if no image).
+* `image` — optional file upload.
+* `target_seconds` — desired total runtime. Defaults to 60. Clamped to
+  `[20, 180]`.
+
+SSE event types emitted on `GET /events/<job_id>`:
+
+* `phase` — `{phase: "phase0".."phase6", status: "running"|"done", title, detail, [scenes, preview]}`.
+* `log` — every line from the AEVE logger (level + message).
+* `complete` — `{video_path, absolute_path, duration_s, drift_ms}`.
+* `error` — `{message, type}`.
+* `end` — sentinel; the SSE generator closes after this.
+
+`/output/<filename>` serves files from `config.FINAL_DIR`.
+
+---
+
 ## Validation summary (CI gates)
 
 1. **Schema round-trip** — `tests/test_schemas.py`: every Pydantic model
@@ -426,33 +467,50 @@ the caller's. The test gate is in `tests/golden/`.
    or concat commands, drift logged but not raised.
 9. **Setup** — `tests/test_setup_check.py`: report semantics + per-tool
    probes.
-10. **Orchestrator glue** — `tests/test_orchestrator.py`: phases 0-6 wire
-    correctly with all LLM/subprocess calls stubbed.
+10. **Orchestrator glue** — `tests/test_orchestrator.py`: phases 0-6
+    wire correctly with all LLM/subprocess calls stubbed.
+11. **Carryover runtime** — `tests/test_runtime.py`: `emit_carry`
+    payload + duck-typing + missing `get_center` fallback.
+12. **No-legacy-sync** — `tests/test_no_legacy_sync.py`: legacy files
+    stay deleted; AEVE 2.0 modules must NOT import `pipeline.sync_engine`
+    or anything from the retired `models/` package; `renderer/assembler.py`
+    must not reference `sync_engine` anywhere.
+13. **Golden frame (offline sanity)** — `tests/test_golden.py`:
+    `tests/golden/pythagoras_60s/scene_003.py` parses + has
+    AST-predicted runtime in `[4.6, 5.4]`. The actual frame compare is
+    live-only and skips until `expected.png` is bootstrapped.
+14. **Live end-to-end (gated)** — `tests/test_e2e.py` (mark `live`):
+    "Prove the Pythagorean theorem" prompt produces 4-8 scenes, < 50 ms
+    total drift, < 50 ms per-scene drift, playable `final.mp4`.
 
-Run `pytest` for the offline suite (155 tests, ~6 s). Add `-m live` to
-include the LLM/edge-tts probes (consumes API quota).
+Run `pytest` for the offline suite (165 tests, ~7 s). Add `-m live` to
+include the LLM/edge-tts/render probes (consumes API quota and runs
+real Manim).
 
 ---
 
-## Legacy AEVE 1.0 (still active during the side-by-side period)
+## Legacy AEVE 1.0 (retired)
 
-For historical reference. The `python app.py` and `python main.py` flows
-still use the legacy 10-agent pipeline (M1-M10) until Day 6 of the
-rewrite migrates them. Module-level entry points:
+The original 10-agent pipeline (M1–M10) was retired in Day 7 of the
+rewrite. The following files are gone:
 
-* `pipeline/phase1_knowledge.py` — M1 Solver + M2 Verifier.
-* `pipeline/phase2_committee.py` — M3 Storyboarder + M4 Visual Detailer +
-  M5 Technical Critic + M6 Finalizer.
-* `pipeline/phase3_distributor.py` — M7 Polisher + M8 TTS + M9 Coder +
-  M10 Reviewer (max 3 retries).
-* `pipeline/sync_engine.py` — regex `self.wait()` patcher (the
-  AEVE 2.0 audit identified this as the sync bug). **Will be deleted in
-  Day 6.**
-* `renderer/manim_runner.py` — legacy renderer.
-* `renderer/assembler.py::assemble_final_video()` — legacy assembler with
-  `-shortest`. **Preserved alongside the new `assemble()` async function;
-  retired in Day 6.**
+* `pipeline/phase{1,2,3}_*.py`
+* `pipeline/sync_engine.py` (regex `self.wait()` patcher; the audit
+  identified this as the sync bug)
+* `pipeline/audio_stream.py`, `pipeline/code_stream.py`
+* `renderer/manim_runner.py`
+* the `assemble_final_video()` / `merge_audio_video()` /
+  `concatenate_scenes()` functions in `renderer/assembler.py`
+* the `models/` package (legacy LLM router; AEVE 2.0 uses
+  `pipeline/llm_clients/` instead)
+* the `--legacy` flag in `main.py` and the `mode=legacy` form field in
+  `app.py`
 
-The legacy pipeline produces `script_1_deep_solution.md`,
-`scene_manifest.json`, and `output/final/final_video.mp4`. The AEVE 2.0
-pipeline writes alongside these without conflict.
+`tests/test_no_legacy_sync.py` carries two CI gates:
+
+1. None of those files may be recreated.
+2. No AEVE 2.0 module may `import` from `pipeline.sync_engine` or the
+   `models` package.
+
+A new file resurrecting any legacy pattern fails the test loudly. To
+spelunk the historical contract, `git log` is the source of truth.

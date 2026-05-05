@@ -45,15 +45,18 @@ def test_voice_fallbacks_are_distinct_and_nonempty():
 
 
 @pytest.mark.live
-@pytest.mark.asyncio
-async def test_tts_live_synthesizes_short_phrase(tmp_path: Path):
+def test_tts_live_synthesizes_short_phrase(tmp_path: Path):
+    import asyncio
+
     from pipeline.tts import synthesize
 
     out = tmp_path / "scene_001.mp3"
-    audio = await synthesize(
-        text="Hello world. This is a synchronization test.",
-        out_path=out,
-        scene_id="001",
+    audio = asyncio.run(
+        synthesize(
+            text="Hello world. This is a synchronization test.",
+            out_path=out,
+            scene_id="001",
+        )
     )
     assert isinstance(audio, SceneAudio)
     assert out.exists() and out.stat().st_size > 0

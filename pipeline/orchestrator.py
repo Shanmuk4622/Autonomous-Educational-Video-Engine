@@ -36,7 +36,7 @@ from pathlib import Path
 import config
 
 from pipeline.animator import animate
-from pipeline.carryover import empty_carry
+from pipeline.carryover import empty_carry, predict_carry_from_storyboard
 from pipeline.director import direct
 from pipeline.narrator import polish
 from pipeline.schemas import (
@@ -210,27 +210,34 @@ async def _phase4_fanout(
 ) -> list[SceneCode]:
     """Fan out the Animator across scenes; return SceneCode in scene-id order.
 
-    Carryover note: at Day 4 there are no real carry.json files yet (those
-    are written at render time by the rendered Manim scene). Each animator
-    invocation therefore receives `empty_carry(scene_id)`. Day 5+ will read
-    the prior scene's carry from disk after its render completes and chain
-    them together — at which point this fan-out becomes a sequential walk
-    rather than a gather.
+    Each scene's `prior_carry` is *predicted* from the storyboard's
+    `carryover_objects` field of the previous scene + the StyleManifest's
+    layout zones — see `pipeline.carryover.predict_carry_from_storyboard`.
+    This keeps the fan-out parallel (no dependency on the prior scene's
+    render output). Scene 001 always receives `empty_carry(...)`.
     """
     scenes_dir.mkdir(parents=True, exist_ok=True)
     audios_by_id = {a.scene_id: a for a in audios}
-    tasks = [
-        asyncio.create_task(
-            _animate_one(
-                scene=scene,
-                audio=audios_by_id[scene.scene_id],
-                prior_carry=empty_carry(scene.scene_id),
-                style=style,
-                scenes_dir=scenes_dir,
+
+    tasks: list[asyncio.Task[SceneCode]] = []
+    for idx, scene in enumerate(storyboard.scenes):
+        if idx == 0:
+            prior_carry = empty_carry(scene.scene_id)
+        else:
+            prior_carry = predict_carry_from_storyboard(
+                storyboard.scenes[idx - 1], style
+            )
+        tasks.append(
+            asyncio.create_task(
+                _animate_one(
+                    scene=scene,
+                    audio=audios_by_id[scene.scene_id],
+                    prior_carry=prior_carry,
+                    style=style,
+                    scenes_dir=scenes_dir,
+                )
             )
         )
-        for scene in storyboard.scenes
-    ]
     codes = await asyncio.gather(*tasks)
     codes.sort(key=lambda c: c.scene_id)
     return list(codes)

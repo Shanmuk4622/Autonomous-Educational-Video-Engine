@@ -18,9 +18,11 @@ Robustness:
        add_sound). Ensures we don't render something the renderer can't.
     4. Gate C — `predict_manim_runtime(code)` ∈ [0.92·T, 1.05·T].
     5. On any gate failure, ONE repair round is attempted with the gate error
-       injected back into the user prompt. After two attempts we surrender
-       and raise `LLMError`. Network/rate-limit failures are handled inside
-       `call_agent` — we only own the gate-repair loop.
+       injected back into the user prompt. After two attempts we fall back to
+       `renderer.healer.write_fallback_scene` — a deterministic Jinja scene
+       guaranteed to pass the gates. The pipeline never blocks on a single
+       scene's animation failure. Network/rate-limit failures are handled
+       inside `call_agent` — we only own the gate-repair loop.
 
 Allowed primitives are listed verbatim in the system prompt; the AST walker
 also rejects anything starting with `add_sound` or matching the forbidden set.
@@ -38,7 +40,6 @@ import config
 
 from pipeline.carryover import empty_carry
 from pipeline.llm_clients import call_agent
-from pipeline.llm_clients.errors import LLMError, LLMErrorContext
 from pipeline.schemas import (
     SceneAudio,
     SceneCarry,
@@ -367,10 +368,9 @@ async def animate(
         scenes_dir: Where to write the .py file. Defaults to config.SCENES_DIR.
 
     Returns:
-        SceneCode pointing at the written file.
-
-    Raises:
-        LLMError: both gate-repair attempts failed across the animator chain.
+        SceneCode pointing at the written file. If both gate-repair attempts
+        fail, a deterministic fallback scene is written instead — the function
+        always returns a valid SceneCode rather than raising.
     """
     target_runtime_s = audio.duration_s
     carry = prior_carry or empty_carry(scene.scene_id)
@@ -449,10 +449,34 @@ async def animate(
             predicted_runtime_s=outcome.predicted_runtime_s,
         )
 
-    raise LLMError(
-        f"animator gate-repair exhausted for scene {scene.scene_id}: "
-        f"{last_gate_error}",
-        context=LLMErrorContext(role="animator"),
+    # Gate-repair exhausted. Fall back to the deterministic Jinja scene rather
+    # than abort the whole pipeline — matches how renderer.render handles its
+    # own exhaustion. The fallback uses the storyboard's title + formulas and
+    # is guaranteed to parse and pass the same gates.
+    from renderer.healer import write_fallback_scene  # deferred: avoids cycle
+
+    logger.warning(
+        "[animator] scene %s — gate-repair exhausted (%s); writing "
+        "deterministic fallback scene",
+        scene.scene_id,
+        last_gate_error,
+    )
+    write_fallback_scene(
+        py_path=out_path,
+        scene_id=scene.scene_id,
+        title=scene.title,
+        formulas=scene.formulas,
+        target_runtime_s=target_runtime_s,
+    )
+    fallback_code = out_path.read_text(encoding="utf-8")
+    outcome = run_gates(fallback_code, target_runtime_s, scene_id=scene.scene_id)
+    return SceneCode(
+        scene_id=scene.scene_id,
+        py_path=out_path,
+        class_name=outcome.class_name,
+        target_runtime_s=target_runtime_s,
+        ast_validated=True,
+        predicted_runtime_s=outcome.predicted_runtime_s,
     )
 
 

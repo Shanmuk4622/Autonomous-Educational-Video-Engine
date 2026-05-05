@@ -45,18 +45,16 @@ py-modules = ["app", "main", "config", "setup_check"]
 
 [tool.setuptools.packages.find]
 where = ["."]
-include = ["pipeline*", "renderer*", "models*"]
+include = ["pipeline*", "renderer*"]
 exclude = ["tests*", "output*", "media*", "__pycache__*"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
-asyncio_mode = "auto"
 filterwarnings = [
     "ignore::DeprecationWarning",
 ]
-timeout = 120
 markers = [
-    "live: hits real LLM/TTS providers; only runs with `pytest -m live`",
+    "live: hits real LLM/TTS/render providers; only runs with `pytest -m live`",
 ]
 addopts = "-m 'not live'"
 

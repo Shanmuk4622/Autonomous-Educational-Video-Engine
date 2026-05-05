@@ -85,11 +85,14 @@ def test_rejects_empty_steps():
 
 
 @pytest.mark.live
-@pytest.mark.asyncio
-async def test_solver_live_pythagorean():
+def test_solver_live_pythagorean():
+    import asyncio
+
     from pipeline.solver import solve
 
-    sol = await solve("Prove the Pythagorean theorem with a square-rearrangement proof.")
+    sol = asyncio.run(
+        solve("Prove the Pythagorean theorem with a square-rearrangement proof.")
+    )
     assert isinstance(sol, DeepSolution)
     assert sol.steps, "solver must return at least one step"
     assert "pythag" in sol.topic.lower() or "right" in sol.topic.lower()

@@ -5,15 +5,13 @@ synchronized educational video: Manim animations, edge-TTS narration, and a
 single `.mp4` you can play. It runs entirely locally with free / low-cost LLM
 providers (Groq, OpenRouter) and no Anthropic dependency.
 
-> **Status (2026-05-03):** AEVE 2.0 is **the default** for both the CLI
-> and the web UI. The 5-agent pipeline (Solver → Director → Narrator+TTS
-> → Animator → Render+Healer → Assembler) lands a final video end-to-end
-> with Pydantic-gated phase boundaries and a 50 ms drift budget. Legacy
-> AEVE 1.0 (10 agents) is preserved behind explicit opt-ins
-> (`--legacy` flag for CLI, `mode=legacy` form field for the web)
-> during the side-by-side period and will be retired in Day 7. See
-> `ORCHESTRATION.md` for the agent contract and `CLAUDE.md` for the
-> rewrite spec.
+> **Status (2026-05-03):** AEVE 2.0 is generally available. The 5-agent
+> pipeline (Solver → Director → Narrator+TTS → Animator → Render+Healer
+> → Assembler) lands a final video end-to-end with Pydantic-gated phase
+> boundaries and a 50 ms drift budget. The legacy 10-agent pipeline has
+> been retired (Day 7); a CI gate (`tests/test_no_legacy_sync.py`)
+> guards against accidental resurrection. See `ORCHESTRATION.md` for
+> the agent contract and `CLAUDE.md` for the rewrite history.
 
 ---
 
@@ -115,7 +113,7 @@ GOOGLE_API_KEY = "AIza..."   # optional fallback
 
 ## Running it
 
-### CLI (default = AEVE 2.0)
+### CLI
 
 ```powershell
 conda activate cv_conda
@@ -124,18 +122,17 @@ python main.py --image path/to/diagram.png "Explain this image"
 python main.py "Derive the quadratic formula" --output-dir ./run01
 ```
 
-`main.py` now defaults to AEVE 2.0. Pass `--legacy` to use the AEVE 1.0
-10-agent pipeline (with `--quality {low,medium,high,4k}` honored).
+Flags: `--target-seconds` (default 60, clamped to `[20, 180]`),
+`--image PATH`, `--output-dir PATH`.
 
-### CLI smoke harness (AEVE 2.0 only)
+### CLI module entrypoint
 
 ```powershell
 python -m pipeline.orchestrator "Prove the Pythagorean theorem" --target-seconds 60
 ```
 
-This is the same code path as `python main.py "..."` (no `--legacy`),
-exposed as a module so it's easy to import and instrument from tests.
-Prints a per-scene report:
+Same code path as `python main.py "..."`, exposed as a module so it's
+easy to import and instrument from tests. Prints a per-scene report:
 
 ```
 === AEVE 2.0 phases 0-6 complete ===
@@ -159,10 +156,9 @@ python app.py
 ```
 
 Open http://localhost:5000. The browser-streamed Server-Sent Events
-show six `phase` events (`phase0` … `phase6`) plus per-line log output.
-The default is AEVE 2.0; pass `mode=legacy` in the form data to use the
-legacy 10-agent pipeline (the form's `quality` field is honored in
-legacy mode and ignored in v2).
+emit a `phase` event per pipeline phase (`phase0` … `phase6`,
+`running`/`done`) plus per-line log output, then a final `complete`
+event with the playable video URL.
 
 ---
 
@@ -170,27 +166,24 @@ legacy mode and ignored in v2).
 
 ```
 output/
-├── style_manifest.json          # AEVE 2.0 — deterministic visual contract
-├── _style.py                    # AEVE 2.0 — generated Python constants
+├── style_manifest.json          # deterministic visual contract (Phase 0)
+├── _style.py                    # generated Python constants the Animator imports
 ├── audio/
-│   ├── scene_001.mp3            # narrated audio
+│   ├── scene_001.mp3            # narrated audio (edge-tts, ffprobe-measured)
 │   ├── scene_001.timeline.json  # word-level offsets from edge-tts WordBoundary
 │   └── …
 ├── scenes/
-│   ├── scene_001.py             # generated Manim source
-│   ├── scene_001.carry.json     # per-scene carryover (Day 6+)
+│   ├── scene_001.py             # generated Manim source (AST-validated)
+│   ├── scene_001.carry.json     # per-scene carryover for the next scene
 │   └── …
 ├── video/
 │   ├── scene_001.mp4            # per-scene rendered + audio-muxed
 │   └── _manim_media/            # raw Manim output (intermediates)
 ├── final/
-│   └── final.mp4                # AEVE 2.0 — assembled final video
+│   └── final.mp4                # assembled final video (drift-verified)
 └── logs/
     └── pipeline.log             # full debug log
 ```
-
-Legacy AEVE 1.0 also produces `script_1_deep_solution.md` and
-`scene_manifest.json` at the top of `output/`.
 
 ---
 
@@ -215,8 +208,8 @@ Legacy AEVE 1.0 also produces `script_1_deep_solution.md` and
 | `renderer/sanitize.py` | Safe legacy-name renames + Polygon spread |
 | `renderer/assembler.py` | Phase 6 — normalize-then-concat (no `-shortest`) |
 | `setup_check.py` | Environment verifier (also `aeve-setup-check`) |
-| `tests/` | 165 unit tests; live tests gated behind `pytest -m live` |
-| `app.py`, `main.py` | Entry points — default to AEVE 2.0; legacy via `--legacy` / `mode=legacy` |
+| `tests/` | 173 unit tests; live tests gated behind `pytest -m live` |
+| `app.py`, `main.py` | AEVE 2.0 entry points (web + CLI) |
 
 See `ORCHESTRATION.md` for the full per-agent contract (model routing,
 schemas, repair-round behavior).
@@ -236,7 +229,7 @@ pytest -m live
 pytest tests/test_animator.py
 ```
 
-The default suite is `165 passed, 5 deselected` and runs in ~7 s.
+The default suite is `173 passed, 5 deselected` and runs in ~6 s.
 
 ---
 

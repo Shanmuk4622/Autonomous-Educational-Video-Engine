@@ -60,7 +60,15 @@ async def _stream_one(
 
     Raises any edge-tts exception unchanged so the caller can fall back.
     """
-    communicate = edge_tts.Communicate(text=text, voice=voice, rate=rate, volume=volume)
+    # edge-tts >=7.x defaults to `boundary="SentenceBoundary"`; we need word-
+    # level events so the Animator can anchor reveals to spoken words.
+    communicate = edge_tts.Communicate(
+        text=text,
+        voice=voice,
+        rate=rate,
+        volume=volume,
+        boundary="WordBoundary",
+    )
     word_events: list[WordEvent] = []
     audio_bytes = bytearray()
 

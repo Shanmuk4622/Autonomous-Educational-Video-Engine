@@ -1,5 +1,12 @@
 /**
- * AEVE Frontend — Interactive pipeline UI with SSE real-time progress.
+ * AEVE 2.0 Frontend — Interactive pipeline UI with SSE real-time progress.
+ *
+ * SSE event types we handle:
+ *   {type: 'phase',    data: {phase: 'phase0'..'phase6', status: 'running'|'done', title, detail, [scenes, preview]}}
+ *   {type: 'log',      data: {level, message}}
+ *   {type: 'complete', data: {video_path, absolute_path, duration_s, drift_ms}}
+ *   {type: 'error',    data: {type, message}}
+ *   {type: 'end',      data: {}}
  */
 
 // ─── DOM Elements ──────────────────────────────────────────
@@ -19,8 +26,9 @@ const logContainer = document.getElementById('logContainer');
 const logToggle = document.getElementById('logToggle');
 const logToggleBtn = document.getElementById('logToggleBtn');
 const elapsedTime = document.getElementById('elapsedTime');
+const targetSecondsInput = document.getElementById('targetSeconds');
+const targetSecondsValue = document.getElementById('targetSecondsValue');
 
-let selectedQuality = 'low';
 let timerInterval = null;
 let startTime = null;
 
@@ -57,14 +65,12 @@ function onFileSelect(file) {
     fileUpload.classList.add('has-file');
 }
 
-// ─── Quality Selector ──────────────────────────────────────
-document.querySelectorAll('.quality-btn').forEach(btn => {
-    btn.addEventListener('click', () => {
-        document.querySelectorAll('.quality-btn').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        selectedQuality = btn.dataset.quality;
+// ─── Target Runtime Slider ─────────────────────────────────
+if (targetSecondsInput && targetSecondsValue) {
+    targetSecondsInput.addEventListener('input', () => {
+        targetSecondsValue.textContent = targetSecondsInput.value;
     });
-});
+}
 
 // ─── Log Toggle ────────────────────────────────────────────
 logToggle.addEventListener('click', () => {
@@ -101,10 +107,11 @@ form.addEventListener('submit', async (e) => {
         return;
     }
 
-    // Prepare form data
+    // Prepare form data — AEVE 2.0 (mode=v2 is the server default)
     const formData = new FormData();
     formData.append('query', query);
-    formData.append('quality', selectedQuality);
+    formData.append('target_seconds', targetSecondsInput ? targetSecondsInput.value : '60');
+    formData.append('mode', 'v2');
     if (hasImage) {
         formData.append('image', imageInput.files[0]);
     }
@@ -245,12 +252,17 @@ function appendLog(data) {
 function handleComplete(data) {
     statusBadge.textContent = 'Complete ✓';
 
-    // Show result
     pipelineSection.style.display = 'none';
     resultSection.style.display = 'block';
 
     const video = document.getElementById('resultVideo');
     video.src = data.video_path;
+
+    const meta = document.getElementById('resultMeta');
+    if (meta && data.duration_s !== undefined) {
+        const driftSign = data.drift_ms >= 0 ? '+' : '';
+        meta.textContent = `${data.duration_s.toFixed(2)}s · drift ${driftSign}${data.drift_ms}ms`;
+    }
 }
 
 function handleError(data) {

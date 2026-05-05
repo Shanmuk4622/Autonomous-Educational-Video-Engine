@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AEVE — Autonomous Educational Video Engine</title>
+    <title>AEVE 2.0 — Autonomous Educational Video Engine</title>
     <link rel="stylesheet" href="/static/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 </head>
@@ -23,8 +23,8 @@
                         </svg>
                     </div>
                     <div>
-                        <h1>AEVE</h1>
-                        <p class="tagline">Autonomous Educational Video Engine</p>
+                        <h1>AEVE 2.0</h1>
+                        <p class="tagline">Autonomous Educational Video Engine — 5 agents, 6 phases, 50ms drift budget</p>
                     </div>
                 </div>
                 <div class="header-badge">
@@ -47,7 +47,7 @@
                     <form id="pipelineForm" enctype="multipart/form-data">
                         <div class="input-group">
                             <label for="queryInput" class="label">Topic or Question</label>
-                            <textarea id="queryInput" name="query" 
+                            <textarea id="queryInput" name="query"
                                 placeholder="e.g. Prove the Pythagorean theorem using similar triangles..."
                                 rows="3"></textarea>
                         </div>
@@ -65,12 +65,12 @@
                             </div>
 
                             <div class="input-group quality-group">
-                                <label class="label">Quality</label>
-                                <div class="quality-selector">
-                                    <button type="button" class="quality-btn active" data-quality="low">⚡ Fast</button>
-                                    <button type="button" class="quality-btn" data-quality="medium">⚖️ Medium</button>
-                                    <button type="button" class="quality-btn" data-quality="high">✨ High</button>
-                                </div>
+                                <label class="label" for="targetSeconds">
+                                    Target runtime: <span id="targetSecondsValue">60</span>s
+                                </label>
+                                <input type="range" id="targetSeconds" name="target_seconds"
+                                       min="20" max="180" step="5" value="60" class="target-slider">
+                                <p class="hint">Clamped to [20, 180]. Roughly 4–7 scenes for ≤90s, more for longer.</p>
                             </div>
                         </div>
 
@@ -92,24 +92,41 @@
                     <div class="elapsed-time" id="elapsedTime">0:00</div>
                 </div>
 
-                <!-- Pipeline Steps -->
+                <!-- AEVE 2.0 — six phases (Phase 0 is style, deterministic, no LLM) -->
                 <div class="pipeline-steps">
-                    <div class="step" id="step-phase1" data-step="phase1">
+                    <div class="step" id="step-phase0" data-step="phase0">
                         <div class="step-connector"></div>
                         <div class="step-indicator">
-                            <div class="step-dot">
-                                <span class="step-number">I</span>
-                            </div>
+                            <div class="step-dot"><span class="step-number">0</span></div>
                         </div>
                         <div class="step-content">
                             <div class="step-header">
-                                <h3>Knowledge Distillation</h3>
+                                <h3>Style Manifest</h3>
+                                <span class="step-badge" id="badge-phase0">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase0">Deterministic palette + 6 layout zones</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot"></span>No LLM</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase0"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-phase1" data-step="phase1">
+                        <div class="step-connector"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot"><span class="step-number">1</span></div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Solver</h3>
                                 <span class="step-badge" id="badge-phase1">Pending</span>
                             </div>
-                            <p class="step-detail" id="detail-phase1">M1 (Problem Solver) + M2 (Verifier)</p>
+                            <p class="step-detail" id="detail-phase1">Math reasoning → DeepSolution</p>
                             <div class="step-models">
-                                <span class="model-tag"><span class="model-dot groq"></span>M1 Groq/Llama-70B</span>
-                                <span class="model-tag"><span class="model-dot openrouter"></span>M2 DeepSeek-R1</span>
+                                <span class="model-tag"><span class="model-dot groq"></span>Kimi K2</span>
+                                <span class="model-tag fallback"><span class="model-dot openrouter"></span>DeepSeek V3</span>
+                                <span class="model-tag fallback"><span class="model-dot groq"></span>Llama-70B</span>
                             </div>
                             <div class="step-preview" id="preview-phase1"></div>
                         </div>
@@ -118,21 +135,18 @@
                     <div class="step" id="step-phase2" data-step="phase2">
                         <div class="step-connector"></div>
                         <div class="step-indicator">
-                            <div class="step-dot">
-                                <span class="step-number">II</span>
-                            </div>
+                            <div class="step-dot"><span class="step-number">2</span></div>
                         </div>
                         <div class="step-content">
                             <div class="step-header">
-                                <h3>Consensus Committee</h3>
+                                <h3>Director</h3>
                                 <span class="step-badge" id="badge-phase2">Pending</span>
                             </div>
-                            <p class="step-detail" id="detail-phase2">M3 (Storyboard) → M4 (Visual) → M5 (Critic) → M6 (Finalizer)</p>
+                            <p class="step-detail" id="detail-phase2">Plan scenes → Storyboard</p>
                             <div class="step-models">
-                                <span class="model-tag"><span class="model-dot groq"></span>M3 Llama-70B</span>
-                                <span class="model-tag"><span class="model-dot openrouter"></span>M4 DeepSeek</span>
-                                <span class="model-tag"><span class="model-dot groq"></span>M5 Llama-70B</span>
-                                <span class="model-tag"><span class="model-dot openrouter"></span>M6 Qwen-72B</span>
+                                <span class="model-tag"><span class="model-dot groq"></span>Llama-70B</span>
+                                <span class="model-tag fallback"><span class="model-dot openrouter"></span>Llama-70B (OR)</span>
+                                <span class="model-tag fallback"><span class="model-dot groq"></span>Llama-8B</span>
                             </div>
                             <div class="step-preview" id="preview-phase2"></div>
                         </div>
@@ -141,44 +155,76 @@
                     <div class="step" id="step-phase3" data-step="phase3">
                         <div class="step-connector"></div>
                         <div class="step-indicator">
-                            <div class="step-dot">
-                                <span class="step-number">III</span>
-                            </div>
+                            <div class="step-dot"><span class="step-number">3</span></div>
                         </div>
                         <div class="step-content">
                             <div class="step-header">
-                                <h3>Distribution — Audio + Code</h3>
+                                <h3>Narrator + TTS</h3>
                                 <span class="step-badge" id="badge-phase3">Pending</span>
                             </div>
-                            <p class="step-detail" id="detail-phase3">M7 (Narration) + M8 (TTS) | M9 (Manim Code) + M10 (Review)</p>
+                            <p class="step-detail" id="detail-phase3">Polish narration → edge-tts → SceneAudio</p>
                             <div class="step-models">
-                                <span class="model-tag"><span class="model-dot groq"></span>M7 Llama-70B</span>
-                                <span class="model-tag"><span class="model-dot tts"></span>M8 Edge-TTS</span>
-                                <span class="model-tag"><span class="model-dot openrouter"></span>M9 DeepSeek-R1</span>
-                                <span class="model-tag"><span class="model-dot groq"></span>M10 Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot groq"></span>Llama-70B</span>
+                                <span class="model-tag"><span class="model-dot tts"></span>Aria/Jenny/Guy</span>
                             </div>
                             <div class="step-preview" id="preview-phase3"></div>
                         </div>
                     </div>
 
-                    <div class="step" id="step-assembly" data-step="assembly">
-                        <div class="step-connector last"></div>
+                    <div class="step" id="step-phase4" data-step="phase4">
+                        <div class="step-connector"></div>
                         <div class="step-indicator">
-                            <div class="step-dot">
-                                <span class="step-number">IV</span>
-                            </div>
+                            <div class="step-dot"><span class="step-number">4</span></div>
                         </div>
                         <div class="step-content">
                             <div class="step-header">
-                                <h3>Render & Assembly</h3>
-                                <span class="step-badge" id="badge-assembly">Pending</span>
+                                <h3>Animator</h3>
+                                <span class="step-badge" id="badge-phase4">Pending</span>
                             </div>
-                            <p class="step-detail" id="detail-assembly">Manim render + FFmpeg merge → Final video</p>
+                            <p class="step-detail" id="detail-phase4">AST-validated Manim → SceneCode</p>
                             <div class="step-models">
-                                <span class="model-tag"><span class="model-dot manim"></span>Manim CE</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>Nemotron-3 Coder</span>
+                                <span class="model-tag fallback"><span class="model-dot openrouter"></span>Qwen3-Coder</span>
+                                <span class="model-tag fallback"><span class="model-dot openrouter"></span>DeepSeek V3</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase4"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-phase5" data-step="phase5">
+                        <div class="step-connector"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot"><span class="step-number">5</span></div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Render + Healer</h3>
+                                <span class="step-badge" id="badge-phase5">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase5">manim → ffprobe drift → AAC mux (no -shortest)</p>
+                            <div class="step-models">
+                                <span class="model-tag"><span class="model-dot manim"></span>Manim CE 0.19</span>
+                                <span class="model-tag"><span class="model-dot openrouter"></span>DeepSeek-R1 (Healer)</span>
+                            </div>
+                            <div class="step-preview" id="preview-phase5"></div>
+                        </div>
+                    </div>
+
+                    <div class="step" id="step-phase6" data-step="phase6">
+                        <div class="step-connector last"></div>
+                        <div class="step-indicator">
+                            <div class="step-dot"><span class="step-number">6</span></div>
+                        </div>
+                        <div class="step-content">
+                            <div class="step-header">
+                                <h3>Assembler</h3>
+                                <span class="step-badge" id="badge-phase6">Pending</span>
+                            </div>
+                            <p class="step-detail" id="detail-phase6">Normalize + concat → Final video (drift &lt; 50ms)</p>
+                            <div class="step-models">
                                 <span class="model-tag"><span class="model-dot ffmpeg"></span>FFmpeg</span>
                             </div>
-                            <div class="step-preview" id="preview-assembly"></div>
+                            <div class="step-preview" id="preview-phase6"></div>
                         </div>
                     </div>
                 </div>
@@ -201,6 +247,7 @@
                     <div class="result-icon">🎬</div>
                     <h2>Video Ready!</h2>
                     <video id="resultVideo" controls class="result-video"></video>
+                    <p class="result-meta" id="resultMeta"></p>
                     <div class="result-actions">
                         <button class="action-btn primary" onclick="location.reload()">
                             <span>+ New Video</span>
